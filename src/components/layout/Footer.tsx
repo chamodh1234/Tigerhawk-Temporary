@@ -1,0 +1,190 @@
+import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
+import Logo from '@/public/logo.png'
+
+const Footer = () => {
+  const currentYear = new Date().getFullYear()
+
+  const footerLinks = {
+    company: [
+      { name: 'About Us', href: '/about' },
+      { name: 'Our Story', href: '/about/story' },
+      { name: 'Careers', href: '/careers' },
+      { name: 'Press', href: '/press' },
+    ],
+    products: [
+      { name: 'Lanterns', href: '/products/lanterns' },
+      { name: 'Flashlights', href: '/products/flashlights' },
+      { name: 'Camping Gear', href: '/products/camping' },
+      { name: 'Emergency Kits', href: '/products/emergency' },
+    ],
+    services: [
+      { name: 'Custom Solutions', href: '/services/custom' },
+      { name: 'Bulk Orders', href: '/services/bulk' },
+      { name: 'Rental Services', href: '/services/rental' },
+      { name: 'Maintenance', href: '/services/maintenance' },
+    ],
+    support: [
+      { name: 'Help Center', href: '/support' },
+      { name: 'Contact Us', href: '/contact' },
+      { name: 'Warranty', href: '/warranty' },
+      { name: 'Returns', href: '/returns' },
+    ],
+  }
+
+  const socialLinks = [
+    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com' },
+    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com' },
+    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
+  ]
+
+  return (
+    <footer className="bg-gray-900 text-white">
+      <div className="wrapper py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Company Info */}
+          <div className="lg:col-span-2">
+            <div className="flex  mb-4">
+              <Image 
+                src={Logo}
+                alt="Tiger Hawk Logo" 
+                width={80} 
+                height={70}
+                className="rounded-lg"
+              />
+              
+            </div>
+            <p className="text-gray-300 mb-4 max-w-md">
+              Trusted Performance in Every Step. Tiger Hawk is your companion for all things bright and safe, 
+              whether you're camping, hiking, or facing an emergency.
+            </p>
+            
+            {/* Contact Info */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-gray-300">
+                <Mail size={16} />
+                <span>info@tigerhawk.com</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-300">
+                <Phone size={16} />
+                <span>+1 234 567 8900</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-300">
+                <MapPin size={16} />
+                <span>123 Adventure St, Outdoor City, OC 12345</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Company</h3>
+            <ul className="space-y-2">
+              {footerLinks.company.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href}
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Products Links */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Products</h3>
+            <ul className="space-y-2">
+              {footerLinks.products.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href}
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services & Support */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Services</h3>
+            <ul className="space-y-2 mb-6">
+              {footerLinks.services.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href}
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            
+            <h3 className="text-lg font-semibold mb-4">Support</h3>
+            <ul className="space-y-2">
+              {footerLinks.support.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href}
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            {/* Copyright */}
+            <div className="text-gray-300 text-sm">
+              © {currentYear} Tiger Hawk. All rights reserved.
+            </div>
+
+            {/* Social Links */}
+            <div className="flex space-x-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  <social.icon size={20} />
+                </a>
+              ))}
+            </div>
+
+            {/* Legal Links */}
+            <div className="flex space-x-6 text-sm">
+              <Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/cookies" className="text-gray-300 hover:text-white transition-colors">
+                Cookie Policy
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+export default Footer 
