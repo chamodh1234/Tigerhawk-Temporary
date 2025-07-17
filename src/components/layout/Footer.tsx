@@ -42,37 +42,40 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#fffb002c] text-black">
       <div className="wrapper py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <div className="flex  mb-4">
-              <Image 
-                src={Logo}
-                alt="Tiger Hawk Logo" 
-                width={80} 
-                height={70}
-                className="rounded-lg"
-              />
-              
-            </div>
-            <p className="text-gray-300 mb-4 max-w-md">
+          <div className="flex items-center">
+                        <Link href="/" className="flex items-center space-x-2 ">
+                            <Image
+                                src={Logo}
+                                alt="Tiger Hawk Logo"
+                                width={60}
+                                height={60}
+                              style={{paddingTop: '4px'}}
+                                className=" bg-black"
+                            />
+                            {/* <span className="text-xl font-bold text-gray-900">TIGER HAWK</span> */}
+                        </Link>
+                    </div>
+            <p className=" mb-4 max-w-md">
               Trusted Performance in Every Step. Tiger Hawk is your companion for all things bright and safe, 
               whether you're camping, hiking, or facing an emergency.
             </p>
             
             {/* Contact Info */}
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-gray-300">
+              <div className="flex items-center space-x-2 ">
                 <Mail size={16} />
                 <span>info@tigerhawk.com</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-300">
+              <div className="flex items-center space-x-2 ">
                 <Phone size={16} />
                 <span>+1 234 567 8900</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-300">
+              <div className="flex items-center space-x-2 ">
                 <MapPin size={16} />
                 <span>123 Adventure St, Outdoor City, OC 12345</span>
               </div>
@@ -87,7 +90,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors"
+                    className=" hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -104,7 +107,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors"
+                    className=" hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -121,7 +124,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors"
+                    className=" hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -135,7 +138,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors"
+                    className=" hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -149,7 +152,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright */}
-            <div className="text-gray-300 text-sm">
+            <div className=" text-sm">
               © {currentYear} Tiger Hawk. All rights reserved.
             </div>
 
@@ -161,7 +164,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className=" hover:text-white transition-colors"
                 >
                   <social.icon size={20} />
                 </a>
@@ -170,13 +173,13 @@ const Footer = () => {
 
             {/* Legal Links */}
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/privacy" className=" hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/terms" className=" hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/cookies" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/cookies" className=" hover:text-white transition-colors">
                 Cookie Policy
               </Link>
             </div>

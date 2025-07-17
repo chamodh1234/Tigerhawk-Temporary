@@ -1,17 +1,17 @@
 import React from 'react'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import HeroSection from './components/HeroSection'
 import TigerhawkSection from './components/TigerhawkSection'
 import CategorySection from './components/CategorySection'
 import BeniftsSection from './components/BenifitsSection'
 import GallerySection from './components/GallerySection'
 import VideoSection from './components/VideoSection'
+import Responsible from './components/Responsible'
+import Inquiry from './components/Inquiry'
 
 const Page = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+     
       
       {/* Main Content */}
       <main className="flex-1">
@@ -24,9 +24,11 @@ const Page = () => {
       <BeniftsSection/>
       <GallerySection/>
       <VideoSection/>
+      <Responsible/>
+      <Inquiry/>
       </main>
 
-      <Footer />
+    
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { apiSlice } from './apiSlice'
 import authSlice from './slices/authSlice'
 import userSlice from './slices/userSlice'
 import dashboardSlice from './slices/dashboardSlice'
+import productSlice from './slices/productSlice'
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     auth: authSlice,
     user: userSlice,
     dashboard: dashboardSlice,
+    product: productSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
