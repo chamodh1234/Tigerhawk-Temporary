@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 const SignInPage = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const SignInPage = () => {
     rememberMe: false
   })
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,9 +33,6 @@ const SignInPage = () => {
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Sign In
         </h1>
-        <p className="text-gray-600">
-          Welcome back! Please sign in to your account.
-        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -57,16 +56,27 @@ const SignInPage = () => {
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
             Password
           </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
@@ -100,7 +110,7 @@ const SignInPage = () => {
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
             Sign up
           </Link>
         </p>

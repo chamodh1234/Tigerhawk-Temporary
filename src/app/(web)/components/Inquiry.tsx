@@ -26,7 +26,7 @@ const Inquiry = () => {
 
   return (
     <>
-      <section className="wrapper mt-20">
+      <section className="wrapper mt-[150px] mb-[150px] ">
         {/* Header */}
         <div className="">
           <div className="max-w-7xl mx-auto">

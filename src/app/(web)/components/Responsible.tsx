@@ -9,14 +9,14 @@ import Image from 'next/image'
 const Responsible = () => {
   return (
     <>
-      <section className="bg-black text-white">
+      <section className=" text-white">
         {/* Hero Header */}
-        <div className="bg-black p-12 md:p-20">
+        <div className="text-black p-12 md:p-20">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl md:text-[60px] font-black text-center mb-4 tracking-tight">
+            <h2 className="text-5xl md:text-[65px] font-bold  text-center mb-4 tracking-tight">
               WHO RESPONSIBLE FOR TIGER HAWK
             </h2>
-            <p className="text-xl md:text-2xl text-gray-300 text-center max-w-4xl mx-auto font-light">
+            <p className="text-xl md:text-[20px]  text-center max-w-4xl mx-auto font-light">
               We are the passionate team behind Tiger Hawk, dedicated to illuminating your world with innovative lighting solutions.
             </p>
           </div>
@@ -35,7 +35,7 @@ const Responsible = () => {
                   We are dedicated to providing innovative lighting solutions that enhance safety and reliability in every situation. Our commitment to quality and performance drives everything we do.
                 </p>
               </div>
-              <div className="p-12 md:p-20 bg-gray-50">
+              <div className="p-12 md:p-20 flex flex-col justify-center items-center ">
                 <h4 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">Lighting the Way Forward</h4>
                 <p className="text-gray-700 text-lg leading-relaxed">
                   Every product we create is designed with a purpose - to make your world brighter, safer, and more reliable. We push the boundaries of what's possible in lighting technology.
@@ -46,12 +46,12 @@ const Responsible = () => {
         </div>
 
         {/* Team Section */}
-        <div className="bg-black text-white">
+        <div className=" text-white">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="p-12 md:p-20 bg-gray-50 text-black">
-                <h4 className="text-2xl md:text-3xl font-bold mb-6">Expert Craftsmanship</h4>
-                <p className="text-black text-lg leading-relaxed">
+              <div className="p-12 md:p-20  text-black flex flex-col justify-center items-center">
+                <h4 className="text-2xl md:text-3xl text-center font-bold mb-6">Expert Craftsmanship</h4>
+                <p className="text-black text-ju  text-lg leading-relaxed">
                   Our diverse team brings together decades of experience in lighting technology, design, and engineering. We're united by a passion for excellence.
                 </p>
               </div>
@@ -69,11 +69,11 @@ const Responsible = () => {
         </div>
 
         {/* Values Grid */}
-        <div className="bg-white text-black">
+        <div className=" text-black mt-10">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3">
-              <div className="p-12 md:p-16 bg-gray-50 border-r border-gray-200">
-                <div className="w-14 h-14 bg-purple-500 rounded-none flex items-center justify-center mb-6">
+              <div className="p-12 md:p-16   border-gray-200">
+                <div className="w-14 h-14  rounded-none flex items-center justify-center mb-6">
                   <Image src={Premium} alt='Our Values' className='w-8 h-8'/>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Our Values</h3>
@@ -82,8 +82,8 @@ const Responsible = () => {
                 </p>
               </div>
 
-              <div className="p-12 md:p-16 bg-white border-r border-gray-200">
-                <div className="w-14 h-14 bg-orange-500 rounded-none flex items-center justify-center mb-6">
+              <div className="p-12 md:p-16 bg-white  border-gray-200">
+                <div className="w-14 h-14  rounded-none flex items-center justify-center mb-6">
                   <Image src={UserFriendlyProduct} alt='Our Commitment' className='w-8 h-8'/>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Our Commitment</h3>
@@ -92,8 +92,8 @@ const Responsible = () => {
                 </p>
               </div>
 
-              <div className="p-12 md:p-16 bg-gray-50">
-                <div className="w-14 h-14 bg-red-500 rounded-none flex items-center justify-center mb-6">
+              <div className="p-12 md:p-16 ">
+                <div className="w-14 h-14  rounded-none flex items-center justify-center mb-6">
                   <Image src={RenewableEnergy} alt='Our Future' className='w-8 h-8'/>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Our Future</h3>
@@ -106,7 +106,7 @@ const Responsible = () => {
         </div>
 
         {/* Responsibility Section */}
-        <div className="bg-indigo-700 text-white">
+        <div className="bg-black text-white">
           <div className="max-w-7xl mx-auto p-12 md:p-20">
             <div className="text-center">
               <div className="w-20 h-20 bg-white/20 rounded-none flex items-center justify-center mx-auto mb-8">
