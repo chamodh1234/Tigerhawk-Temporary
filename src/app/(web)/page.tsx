@@ -19,11 +19,12 @@ const Page = () => {
         <HeroSection/>
 
         {/* Features Section */}
-     <TigerhawkSection/>
+    
      <CategorySection/>
       <BeniftsSection/>
       <GallerySection/>
-      <VideoSection/>
+      <VideoSection/> 
+      <TigerhawkSection/>
       <Responsible/>
       <Inquiry/>
       </main>

@@ -1,29 +1,33 @@
 'use client'
 import React, { useState } from 'react'
-import { useAppSelector } from '@/lib/redux/store'
 import ProductComparison from './ProductComparison'
+
+interface Product {
+  id: string
+  name: string
+  description: string
+  features: string[]
+  specifications: Record<string, string>
+  comparisonData: Array<{
+    specification: string
+    tigerhawk: string
+    typical: string
+  }>
+}
+
+interface ProductInfoProps {
+  product: Product
+}
 
 /**
  * Component for displaying product information tabs
- * Uses Redux state for product data
+ * Uses product prop for data
  * 
  * Debugging:
- * - Check Redux DevTools for product state
  * - Check console for component render logs
  */
-const ProductInfo = () => {
+const ProductInfo = ({ product }: ProductInfoProps) => {
   const [activeTab, setActiveTab] = useState('description')
-  const { currentProduct } = useAppSelector((state) => state.product)
-
-  if (!currentProduct) {
-    return (
-      <div className="bg-white border-t border-gray-200 pt-6">
-        <div className="text-center py-12">
-          <p className="text-gray-500">Loading product information...</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="bg-white border-t border-gray-200 pt-4 sm:pt-6">
@@ -51,14 +55,13 @@ const ProductInfo = () => {
       {/* Tab Content */}
       <div className="py-4 sm:py-6">
         {activeTab === 'description' && (
-          <div className="space-y-3 sm:space-y-4">
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{currentProduct.description}</p>
-          </div>
+          <div className="space-y-3 sm:space-y-4" dangerouslySetInnerHTML={{ __html: product.description }} />
+           
         )}
 
         {activeTab === 'features' && (
           <div className="space-y-2 sm:space-y-3">
-            {currentProduct.features.map((feature, index) => (
+            {product.features.map((feature, index) => (
               <div key={index} className="flex items-start gap-2 sm:gap-3">
                 <div className="w-2 h-2 bg-blue-600 mt-2 flex-shrink-0"></div>
                 <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
@@ -69,7 +72,7 @@ const ProductInfo = () => {
 
         {activeTab === 'specifications' && (
           <div className="space-y-8">
-            <ProductComparison />
+            <ProductComparison product={product} />
           </div>
         )}
       </div>

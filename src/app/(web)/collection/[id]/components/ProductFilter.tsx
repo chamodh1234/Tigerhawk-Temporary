@@ -7,6 +7,7 @@ interface ProductFilterProps {
   onSortChange: (value: string) => void
   onCategoryChange: (value: string) => void
   categories: string[]
+  priceRange: (value: { min: number; max: number }) => void
 }
 
 const ProductFilter = ({ 
@@ -14,7 +15,8 @@ const ProductFilter = ({
   selectedCategory, 
   onSortChange, 
   onCategoryChange, 
-  categories 
+  categories,
+  priceRange
 }: ProductFilterProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [tempSort, setTempSort] = useState(selectedSort)
@@ -43,7 +45,7 @@ const ProductFilter = ({
   return (
     <>
       {/* Filter Button */}
-      <div className="bg-white border-b border-gray-200 py-4">
+      <div className="bg-white  border-gray-200 py-4">
         <div className="wrapper">
           <div className="flex justify-end">
             <button
@@ -95,7 +97,7 @@ const ProductFilter = ({
               <select
                 value={tempCategory}
                 onChange={(e) => setTempCategory(e.target.value)}
-                className="w-full border border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full text-black border border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
               >
                 <option value="">All Categories</option>
                 {categories.map((category) => (
@@ -114,7 +116,7 @@ const ProductFilter = ({
               <select
                 value={tempSort}
                 onChange={(e) => setTempSort(e.target.value)}
-                className="w-full border border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full border text-black border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
               >
                 <option value="name-asc">Name (A-Z)</option>
                 <option value="name-desc">Name (Z-A)</option>
@@ -134,21 +136,23 @@ const ProductFilter = ({
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
+                    onChange={(e) => priceRange({ min: Number(e.target.value), max: 0 })}
                     placeholder="Min"
-                    className="flex-1 border w-1/2 border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                    className="flex-1 text-black border w-1/2 border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
                   />
                   <span className="text-gray-500">-</span>
                   <input
                     type="number"
+                    onChange={(e) => priceRange({ min: 0, max: Number(e.target.value) })}
                     placeholder="Max"
-                    className="flex-1 border w-1/2 border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                    className="flex-1 text-black border w-1/2 border-gray-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* Additional Filters */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Features
               </label>
@@ -170,7 +174,7 @@ const ProductFilter = ({
                   <span className="text-sm text-gray-700">Emergency</span>
                 </label>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Action Buttons */}

@@ -1,28 +1,97 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Heart, ShoppingCart, User } from 'lucide-react'
+import { Search, Heart, ShoppingCart, User, User2 } from 'lucide-react'
 import Logo from '@/public/logo.png'
 import Sidenav from './Sidenav'
+import { useAppSelector, useAppDispatch } from '@/lib/redux/store'
+import { useGetFavouritesQuery, useGetCartQuery, useGetProductsQuery } from '@/lib/redux/apiSlice'
+import { setFavourites } from '@/lib/redux/slices/favouritesSlice'
+import { setCartItems } from '@/lib/redux/slices/cartSlice'
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [isNavOpen, setIsNavOpen] = useState(true);
+    const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+    const User = useAppSelector((state) => state.user)
+    const [userName, setUserName] = useState('')
+    const dispatch = useAppDispatch()
+    const { data: favouritesData } = useGetFavouritesQuery({})
+    const { data: cartData } = useGetCartQuery({})
+    const { data: productsData } = useGetProductsQuery({})
+    
+    // Store favourites in Redux when data is fetched
+    useEffect(() => {
+        if (favouritesData?.data?.favorites) {
+            dispatch(setFavourites(favouritesData.data.favorites))
+        }
+    }, [favouritesData, dispatch])
+    
+    // Store cart items in Redux when data is fetched
+    useEffect(() => {
+        if (cartData?.data?.cart_items) {
+            dispatch(setCartItems(cartData?.data?.cart_items))
+        }
+    }, [cartData, dispatch])
+    
+    // Get favourites count from Redux store
+    const { favourites } = useAppSelector((state) => state.favourites)
+    const favouritesCount = favourites.length
+    
+    // Get cart count from Redux store
+    const { cartItems } = useAppSelector((state) => state.cart)
+    const cartCount = cartItems.length
 
+    // Filter products based on search query
+    const filteredProducts = React.useMemo(() => {
+        if (!searchQuery.trim() || !productsData?.data) return []
+        
+        return productsData.data.filter((product: any) =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.description.toLowerCase().includes(searchQuery.toLowerCase())
+        ).slice(0, 10) // Limit to 10 results for better UX
+    }, [searchQuery, productsData?.data])
+
+    // Show dropdown when typing
+    useEffect(() => {
+        setShowSearchDropdown(searchQuery.length > 0 && filteredProducts.length > 0)
+    }, [searchQuery, filteredProducts.length])
+    
     const navLinks = [
         { name: 'Home', href: '/' },
         { name: 'Products', href: '/products' },
-        { name: 'Services', href: '/services' },
-        { name: 'About Us', href: '/about' },
-        { name: 'Contact Us', href: '/contact' },
+        { name: 'About Us', href: '/about-us' },
+        { name: 'Contact Us', href: '/contact-us' },
     ]
+
+    useEffect(() => {
+        setUserName(localStorage.getItem('un') || '')
+    }, [])
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
         // TODO: Implement search functionality
         console.log('Searching for:', searchQuery)
+    }
+
+    const handleProductClick = (productId: string) => {
+        setSearchQuery('')
+        setShowSearchDropdown(false)
+        // Navigate to product page
+        window.location.href = `/product/${productId}`
+    }
+
+    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value)
+    }
+
+    const handleSearchInputBlur = () => {
+        // Delay hiding dropdown to allow clicking on items
+        setTimeout(() => {
+            setShowSearchDropdown(false)
+        }, 200)
     }
 
     return (
@@ -57,13 +126,15 @@ const Navbar = () => {
                         </div>
                         <div className='flex'>
                             {/* Global Search Bar */}
-                            <div className="hidden lg:flex items-center">
+                            <div className="hidden lg:flex items-center relative">
                                 <form onSubmit={handleSearch} className="flex items-center">
                                     <input
                                         type="text"
-                                        placeholder="Search"
+                                        placeholder="Search products..."
                                         value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onChange={handleSearchInputChange}
+                                        onBlur={handleSearchInputBlur}
+                                        onFocus={() => searchQuery.length > 0 && setShowSearchDropdown(true)}
                                         className="w-[250px] h-[40px] px-4 border border-gray-300  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                     <button
@@ -73,6 +144,45 @@ const Navbar = () => {
                                         <Search size={20} />
                                     </button>
                                 </form>
+
+                                {/* Search Dropdown */}
+                                {showSearchDropdown && (
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 shadow-lg rounded-md max-h-80 overflow-y-auto z-50">
+                                        {filteredProducts.map((product: any) => (
+                                            <div
+                                                key={product.id}
+                                                onClick={() => handleProductClick(product.id)}
+                                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                            >
+                                                <div className="flex items-center space-x-3">
+                                                    {product.images && product.images.length > 0 && (
+                                                        <img
+                                                            src={product.images[0].url}
+                                                            alt={product.name}
+                                                            className="w-10 h-10 object-cover rounded"
+                                                        />
+                                                    )}
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                                            {product.name}
+                                                        </p>
+                                                        {/* <p className="text-xs text-gray-500">
+                                                            ID: {product.id}
+                                                        </p>
+                                                        <p className="text-xs text-gray-600 truncate">
+                                                            ${Number(product.price).toFixed(2)}
+                                                        </p> */}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {filteredProducts.length === 0 && searchQuery.length > 0 && (
+                                            <div className="px-4 py-3 text-sm text-gray-500">
+                                                No products found
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Right Side Actions */}
@@ -83,41 +193,37 @@ const Navbar = () => {
                                 </button>
 
                                 {/* Favorites */}
-                                <button className="p-2 text-gray-600 cursor-pointer hover:text-red-500 transition-colors relative">
+                                <Link href="/favourites" className="p-2 text-gray-600 cursor-pointer hover:text-red-500 transition-colors relative">
                                     <Heart size={20} />
                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                        0
+                                        {favouritesCount}
                                     </span>
-                                </button>
+                                </Link>
 
                                 {/* Cart */}
-                                <button className="p-2 text-gray-600 cursor-pointer hover:text-green-600 transition-colors relative">
+                                <Link href="/cart" className="p-2 text-gray-600 cursor-pointer hover:text-green-600 transition-colors relative">
                                     <ShoppingCart size={20} />
                                     <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                        0
+                                        {cartCount}
                                     </span>
-                                </button>
+                                </Link>
 
                                 {/* Sign In */}
                                 <button className="px-4 py-2 cursor-pointer  rounded-md transition-colors flex items-center space-x-2">
-                                    <User size={16} />
-                                    <span className="hidden sm:inline">Sign In</span>
+                                    <User2 key={User.profile?.id} size={16} />
+
+                                    <span className="hidden sm:inline">{ userName ? <Link href="/profile" className="">{userName}</Link> : (<Link href="/auth/signin" className="">Sign in</Link>)}</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-
-
-                    
                     {/* Mobile Menu (simplified) */}
                     <div className="md:hidden z-20">
                         <Sidenav/>
                     </div>
 
                 </div>
-
-
             </div>
         </nav>
     )

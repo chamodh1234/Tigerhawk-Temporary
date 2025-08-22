@@ -2,21 +2,40 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { useLoginMutation } from '@/lib/redux/apiSlice'
+import type { LoginCredentials } from '@/lib/types/auth'
+import { useRouter } from 'next/navigation'
+import { useAppDispatch, useAppSelector } from '@/lib/redux/store'
+import { setProfile } from '@/lib/redux/slices/userSlice'
+import { getCookie } from '@/lib/utils/cookie'
 
 const SignInPage = () => {
-  const [formData, setFormData] = useState({
+  const router = useRouter()
+  const [formData, setFormData] = useState<LoginCredentials & { rememberMe: boolean }>({
     email: '',
     password: '',
     rememberMe: false
   })
-  const [loading, setLoading] = useState(false)
+  const dispatch = useAppDispatch()
+  const [login, { isLoading, error, data }] = useLoginMutation()
   const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    console.log('Sign in form submitted:', formData)
-    setTimeout(() => setLoading(false), 1000)
+    try {
+      const result = await login({ email: formData.email, password: formData.password }).unwrap()
+      if (result?.success) {
+        localStorage.setItem('token', result.data.token)
+        localStorage.setItem('un', result.data.user.name)
+        localStorage.setItem('uid', result.data.user.id)
+        
+       // console.log('cookieStore', cookieStore)
+        dispatch(setProfile({id:result.data.user.id,email:result.data.user.email,name:result.data.user.name,createdAt:result.data.user.createdAt,updatedAt:result.data.user.updatedAt}))
+        router.push('/')
+      }
+    } catch (err) {
+      // Error is handled by error state
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,12 +117,15 @@ const SignInPage = () => {
           </Link>
         </div>
 
+        {error && (
+          <div className="text-red-600 text-sm">{(error as any)?.data?.error || 'Login failed'}</div>
+        )}
         <button
           type="submit"
-          disabled={loading}
+          disabled={isLoading}
           className="w-full bg-blue-600 text-white py-2 px-4 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Signing in...' : 'Sign In'}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 

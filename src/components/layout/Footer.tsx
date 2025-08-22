@@ -1,11 +1,16 @@
+'use client'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
 import Logo from '@/public/logo.png'
+import { useGetMainCategoriesQuery } from '@/lib/redux/apiSlice'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  
+  // Fetch main categories
+  const { data: mainCategoriesData } = useGetMainCategoriesQuery(undefined)
 
   const footerLinks = {
     company: [
@@ -13,12 +18,6 @@ const Footer = () => {
       { name: 'Our Story', href: '/about/story' },
       { name: 'Careers', href: '/careers' },
       { name: 'Press', href: '/press' },
-    ],
-    products: [
-      { name: 'Lanterns', href: '/products/lanterns' },
-      { name: 'Flashlights', href: '/products/flashlights' },
-      { name: 'Camping Gear', href: '/products/camping' },
-      { name: 'Emergency Kits', href: '/products/emergency' },
     ],
     services: [
       { name: 'Custom Solutions', href: '/services/custom' },
@@ -43,7 +42,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#fffb002c] text-black">
-      <div className="wrapper py-12">
+      <div className="wrapper py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
@@ -60,7 +59,7 @@ const Footer = () => {
                             {/* <span className="text-xl font-bold text-gray-900">TIGER HAWK</span> */}
                         </Link>
                     </div>
-            <p className=" mb-4 max-w-md">
+            <p className=" mb-4 max-w-md mt-4">
               Trusted Performance in Every Step. Tiger Hawk is your companion for all things bright and safe, 
               whether you're camping, hiking, or facing an emergency.
             </p>
@@ -90,7 +89,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className=" hover:text-white transition-colors"
+                    className="  transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -103,34 +102,37 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Products</h3>
             <ul className="space-y-2">
-              {footerLinks.products.map((link) => (
-                <li key={link.name}>
+              {mainCategoriesData?.data?.map((category: any) => (
+                <li key={category.id}>
                   <Link 
-                    href={link.href}
-                    className=" hover:text-white transition-colors"
+                    href={`/collection/${category.id}`}
+                    className="  transition-colors"
                   >
-                    {link.name}
+                    {category.name}
                   </Link>
                 </li>
-              ))}
+              )) || (
+                // Fallback to loading state or empty state
+                <li className="text-gray-500">Loading categories...</li>
+              )}
             </ul>
           </div>
 
           {/* Services & Support */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Services</h3>
+            {/* <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-2 mb-6">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className=" hover:text-white transition-colors"
+                    className="  transition-colors"
                   >
                     {link.name}
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
             
             <h3 className="text-lg font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
@@ -138,7 +140,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className=" hover:text-white transition-colors"
+                    className="  transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -164,7 +166,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className=" hover:text-white transition-colors"
+                  className="  transition-colors"
                 >
                   <social.icon size={20} />
                 </a>
@@ -173,15 +175,15 @@ const Footer = () => {
 
             {/* Legal Links */}
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className=" hover:text-white transition-colors">
+              <Link href="/policies/privacy-policy" className="  transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className=" hover:text-white transition-colors">
+              <Link href="/policies/terms-conditions" className="  transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/cookies" className=" hover:text-white transition-colors">
+              {/* <Link href="/cookies" className="  transition-colors">
                 Cookie Policy
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

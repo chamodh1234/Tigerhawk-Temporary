@@ -1,7 +1,7 @@
 # Next.js Project-Specific Cursor Rules
 
 ## Project Overview
-Next.js application with route-based component organization, server functions, and centralized Redux API management.
+Next.js application with route-based component organization, direct API calls, and centralized Redux API management.
 
 ## Everything that mention in here is rules. and do not implement code inside this file. get reference how to build that it is.
 ## Project Folder Structure
@@ -55,19 +55,6 @@ src/
 │   ├── layout.tsx               # Root layout
 │   └── loading.tsx              # Global loading component
 ├── lib/
-│   ├── server-functions/        # Centralized server functions
-│   │   ├── auth/
-│   │   │   ├── loginUser.ts
-│   │   │   ├── registerUser.ts
-│   │   │   └── validateToken.ts
-│   │   ├── user/
-│   │   │   ├── getUserProfile.ts
-│   │   │   ├── updateProfile.ts
-│   │   │   └── deleteUser.ts
-│   │   ├── dashboard/
-│   │   │   ├── getDashboardStats.ts
-│   │   │   └── getRecentActivity.ts
-│   │   └── index.ts             # Export all server functions
 │   ├── redux/
 │   │   ├── store.ts
 │   │   ├── apiSlice.ts          # Global API slice with token management
@@ -81,6 +68,7 @@ src/
 │   │   ├── api.ts               # API configuration
 │   │   ├── constants.ts
 │   │   ├── helpers.ts
+│   │   ├── logger.ts            # Centralized logging utility
 │   │   └── validation.ts
 │   └── types/
 │       ├── api.ts
@@ -114,31 +102,30 @@ src/
 
 ### API Route Structure
 - ALL API routes go in `/app/api/` directory following REST conventions
-- API routes should NEVER make direct backend calls
-- API routes MUST call server functions from `/lib/server-functions`
-- Server functions handle all backend communication
+- API routes MUST make direct backend API calls using fetch
+- API routes handle all backend communication directly
 - URL structure: `/app/api/auth/login/route.ts` → `/api/auth/login`
 - Route groups like `(auth)` don't affect API URLs - only page URLs
 
-### Server Functions Rules
-- All server functions go in `/lib/server-functions/[feature]/`
-- Group server functions by feature (auth, user, dashboard, etc.)
-- Server functions MUST make actual backend API calls
-- Server functions MUST include proper error handling and logging
-- Export all server functions from `/lib/server-functions/index.ts`
-
 ### Redux API Management
-- ALL API requests MUST go through the Redux API slice (`/lib/redux/apiSlice.ts`)
+- ALL frontend API requests MUST go through the Redux API slice (`/lib/redux/apiSlice.ts`)
 - The Redux API slice MUST handle token management and headers
-- Never make direct fetch calls - always use Redux API endpoints
+- Components use Redux mutations with destructured `{data, isLoading, error}`
+- Never make direct fetch calls from components - always use Redux API endpoints
 - API slice must include token refresh logic
+
+### Component-Redux Integration
+- Components call Redux mutations directly with automatic state handling
+- Use destructured response: `const [loginUser, {data, isLoading, error}] = useLoginMutation()`
+- Handle loading states with `isLoading`
+- Handle errors with `error` object
+- Access response data with `data`
 
 ## Code Conventions
 
 ### File Naming
 - Use PascalCase for React components: `LoginForm.tsx`
 - Use camelCase for hooks: `useLogin.ts`
-- Use camelCase for server functions: `loginUser.ts`
 - Use kebab-case for route folders: `user-profile/`
 
 ### Component Structure
@@ -150,7 +137,15 @@ src/
 import { useLogin } from '../hooks/useLogin'
 
 export default function LoginForm() {
-  // Component logic here
+  const { handleLogin, isLoading, error } = useLogin()
+  
+  return (
+    <form onSubmit={handleLogin}>
+      {isLoading && <p>Logging in...</p>}
+      {error && <p>Error: {error.message}</p>}
+      {/* Form fields */}
+    </form>
+  )
 }
 ```
 
@@ -158,59 +153,135 @@ export default function LoginForm() {
 ```typescript
 // Route-specific hook example
 // File: app/login/hooks/useLogin.ts
-import { useAppDispatch } from '@/lib/redux/store'
-import { loginApi } from '@/lib/redux/apiSlice'
+import { useLoginMutation } from '@/lib/redux/apiSlice'
+import { logger } from '@/lib/utils/logger'
 
 export function useLogin() {
-  // Hook logic using Redux API
+  const [loginUser, { data, isLoading, error }] = useLoginMutation()
+  
+  const handleLogin = async (credentials: LoginCredentials) => {
+    const hookName = 'useLogin'
+    const source = 'app/(auth)/login/hooks/useLogin.ts'
+    
+    try {
+      logger.devLog('🚀', `HOOK:${hookName} - STARTED`, {
+        email: credentials.email,
+        source
+      })
+      
+      const result = await loginUser(credentials).unwrap()
+      
+      logger.devLog('✅', `HOOK:${hookName} - SUCCESS`, {
+        userId: result.user?.id,
+        source
+      })
+      
+      return result
+    } catch (error) {
+      logger.error(`HOOK:${hookName} - ERROR`, {
+        error: error.message,
+        source,
+        ...(process.env.NODE_ENV === 'development' && { 
+          data: error.data,
+          status: error.status 
+        })
+      })
+      
+      throw error
+    }
+  }
+  
+  return { 
+    handleLogin, 
+    data, 
+    isLoading, 
+    error 
+  }
 }
 ```
 
 ### API Route Structure
 ```typescript
 // File: app/api/auth/login/route.ts
-import { loginUser } from '@/lib/server-functions'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: Request) {
+  const routeName = 'auth/login'
+  const source = 'app/api/auth/login/route.ts'
+  
   try {
-    console.log('LOGIN API: Starting login process')
+    logger.devLog('🚀', `API_ROUTE:${routeName} - STARTED`, {
+      method: 'POST',
+      source
+    })
     
     const body = await request.json()
-    const result = await loginUser(body)
     
-    console.log('LOGIN API: Login successful', result)
-    return Response.json(result)
-  } catch (error) {
-    console.error('LOGIN API: Login failed', error)
-    return Response.json({ error: 'Login failed' }, { status: 400 })
-  }
-}
-```
-
-### Server Function Structure
-```typescript
-// File: lib/server-functions/auth/loginUser.ts
-export async function loginUser(credentials: LoginCredentials) {
-  try {
-    console.log('SERVER FUNCTION: Attempting login for user:', credentials.email)
+    logger.devLog('📥', `API_ROUTE:${routeName} - REQUEST_RECEIVED`, {
+      hasEmail: !!body.email,
+      hasPassword: !!body.password,
+      source
+    })
+    
+    logger.devLog('📡', `API_ROUTE:${routeName} - CALLING_BACKEND`, {
+      url: `${process.env.BACKEND_URL}/auth/login`,
+      method: 'POST'
+    })
     
     const response = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials)
+      headers: { 
+        'Content-Type': 'application/json',
+        // Add any required backend headers
+      },
+      body: JSON.stringify(body)
     })
     
     if (!response.ok) {
-      throw new Error(`Backend responded with ${response.status}`)
+      const errorText = await response.text()
+      
+      logger.error(`API_ROUTE:${routeName} - BACKEND_ERROR`, {
+        status: response.status,
+        statusText: response.statusText,
+        source,
+        ...(process.env.NODE_ENV === 'development' && { errorText })
+      })
+      
+      return Response.json(
+        { 
+          error: process.env.NODE_ENV === 'development' 
+            ? `Backend Error: ${response.status} - ${errorText}` 
+            : 'Authentication failed'
+        }, 
+        { status: response.status }
+      )
     }
     
     const result = await response.json()
-    console.log('SERVER FUNCTION: Login successful')
     
-    return result
+    logger.devLog('✅', `API_ROUTE:${routeName} - SUCCESS`, {
+      userId: result.user?.id,
+      tokenReceived: !!result.token,
+      source
+    })
+    
+    return Response.json(result)
   } catch (error) {
-    console.error('SERVER FUNCTION: Login error:', error)
-    throw error
+    logger.error(`API_ROUTE:${routeName} - FATAL_ERROR`, {
+      error: error.message,
+      source,
+      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+    })
+    
+    return Response.json(
+      { 
+        error: process.env.NODE_ENV === 'development' 
+          ? `Login failed: ${error.message}` 
+          : 'Login failed',
+        source: 'API_ROUTE:auth/login' 
+      }, 
+      { status: 500 }
+    )
   }
 }
 ```
@@ -225,7 +296,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: '/api',
     prepareHeaders: (headers, { getState }) => {
-      const token = getState().auth.token
+      const token = (getState() as RootState).auth.token
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }
@@ -233,22 +304,68 @@ export const apiSlice = createApi({
       return headers
     },
   }),
+  tagTypes: ['User', 'Dashboard', 'Auth'],
   endpoints: (builder) => ({
-    login: builder.mutation({
+    // Auth endpoints
+    login: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
-        url: '/api/auth/login',
+        url: '/auth/login',
+        method: 'POST',
+        body: credentials,
+      }),
+      invalidatesTags: ['Auth'],
+    }),
+    register: builder.mutation<AuthResponse, RegisterCredentials>({
+      query: (credentials) => ({
+        url: '/auth/register',
         method: 'POST',
         body: credentials,
       }),
     }),
-    getUserProfile: builder.query({
-      query: () => '/api/user/profile',
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST',
+      }),
+      invalidatesTags: ['Auth', 'User'],
     }),
-    getDashboardStats: builder.query({
-      query: () => '/api/dashboard/stats',
+    
+    // User endpoints
+    getUserProfile: builder.query<UserProfile, void>({
+      query: () => '/user/profile',
+      providesTags: ['User'],
+    }),
+    updateUserProfile: builder.mutation<UserProfile, Partial<UserProfile>>({
+      query: (profileData) => ({
+        url: '/user/profile',
+        method: 'PUT',
+        body: profileData,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    
+    // Dashboard endpoints
+    getDashboardStats: builder.query<DashboardStats, void>({
+      query: () => '/dashboard/stats',
+      providesTags: ['Dashboard'],
+    }),
+    getDashboardActivity: builder.query<ActivityData[], void>({
+      query: () => '/dashboard/activity',
+      providesTags: ['Dashboard'],
     }),
   }),
 })
+
+// Export hooks for usage in components
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useLogoutMutation,
+  useGetUserProfileQuery,
+  useUpdateUserProfileMutation,
+  useGetDashboardStatsQuery,
+  useGetDashboardActivityQuery,
+} = apiSlice
 ```
 
 ## Debugging & Error Handling Requirements
@@ -353,206 +470,38 @@ export const logger = new Logger()
 - Implement proper error boundaries in React components
 
 ### Production-Safe Logging Format
-```typescript
-// Import the logger utility
-import { logger } from '@/lib/utils/logger'
-
-// Server Function with Environment-Aware Logging
-export async function loginUser(credentials: LoginCredentials) {
-  const functionName = 'loginUser'
-  const source = 'lib/server-functions/auth/loginUser.ts'
-  
-  try {
-    // Development: Full detailed log, Production: Silent
-    logger.devLog('🚀', `SERVER_FUNCTION:${functionName} - STARTED`, {
-      email: credentials.email, // Will be sanitized in production
-      source
-    })
-    
-    logger.devLog('📡', `SERVER_FUNCTION:${functionName} - CALLING_BACKEND`, {
-      url: `${process.env.BACKEND_URL}/auth/login`,
-      method: 'POST'
-    })
-    
-    const response = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials)
-    })
-    
-    if (!response.ok) {
-      const errorText = await response.text()
-      
-      // Production: Only error log with sanitized data
-      logger.error(`SERVER_FUNCTION:${functionName} - BACKEND_ERROR`, {
-        status: response.status,
-        statusText: response.statusText,
-        source,
-        // errorText omitted in production for security
-        ...(process.env.NODE_ENV === 'development' && { errorText })
-      })
-      
-      throw new Error(`Backend Error: ${response.status}`)
-    }
-    
-    const result = await response.json()
-    
-    // Development: Success log, Production: Silent
-    logger.devLog('✅', `SERVER_FUNCTION:${functionName} - SUCCESS`, {
-      userId: result.user?.id,
-      tokenReceived: !!result.token,
-      source
-    })
-    
-    return result
-  } catch (error) {
-    // Production: Error log with sanitized data
-    logger.error(`SERVER_FUNCTION:${functionName} - FATAL_ERROR`, {
-      error: error.message,
-      source,
-      // Stack trace only in development
-      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
-    })
-    
-    throw new Error(`${functionName} failed: ${error.message}`)
-  }
-}
-
-// API Route with Environment-Aware Logging
-export async function POST(request: Request) {
-  const routeName = 'auth/login'
-  const source = 'app/api/auth/login/route.ts'
-  
-  try {
-    logger.devLog('🚀', `API_ROUTE:${routeName} - STARTED`, {
-      method: 'POST',
-      source
-    })
-    
-    const body = await request.json()
-    
-    logger.devLog('📥', `API_ROUTE:${routeName} - REQUEST_RECEIVED`, {
-      hasEmail: !!body.email,
-      hasPassword: !!body.password,
-      source
-    })
-    
-    const result = await loginUser(body)
-    
-    logger.devLog('✅', `API_ROUTE:${routeName} - SUCCESS`, {
-      userId: result.user?.id,
-      source
-    })
-    
-    return Response.json(result)
-  } catch (error) {
-    // Production: Error log only
-    logger.error(`API_ROUTE:${routeName} - ERROR`, {
-      error: error.message,
-      source,
-      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
-    })
-    
-    return Response.json(
-      { 
-        error: process.env.NODE_ENV === 'development' 
-          ? `Login failed: ${error.message}` 
-          : 'Login failed', // Generic message in production
-        source: 'API_ROUTE:auth/login' 
-      }, 
-      { status: 400 }
-    )
-  }
-}
-
-// Client-Side Hook with Environment-Aware Logging
-export function useLogin() {
-  const [loginUser, { isLoading, error }] = useLoginMutation()
-  
-  const handleLogin = async (credentials: LoginCredentials) => {
-    const hookName = 'useLogin'
-    const source = 'app/(auth)/login/hooks/useLogin.ts'
-    
-    try {
-      logger.devLog('🚀', `HOOK:${hookName} - STARTED`, {
-        email: credentials.email, // Sanitized in production
-        source
-      })
-      
-      const result = await loginUser(credentials).unwrap()
-      
-      logger.devLog('✅', `HOOK:${hookName} - SUCCESS`, {
-        userId: result.user?.id,
-        source
-      })
-      
-      return result
-    } catch (error) {
-      // Production: Error log only
-      logger.error(`HOOK:${hookName} - ERROR`, {
-        error: error.message,
-        source,
-        ...(process.env.NODE_ENV === 'development' && { 
-          data: error.data,
-          status: error.status 
-        })
-      })
-      
-      throw error
-    }
-  }
-  
-  return { handleLogin, isLoading, error }
-}
-```
-
-### Production Logging Strategy
-- **Development Environment**: Full verbose logging with all debug information
-- **Production Environment**: Only critical errors and warnings
-- **Sensitive Data**: Never log passwords, tokens, or personal info in production
-- **External Logging**: Consider services like Sentry, LogRocket for production error tracking
-- **Error Messages**: Generic messages in production, detailed in development
-
-### Environment Variables Setup
-```env
-# .env.local
-NODE_ENV=development  # or 'production'
-ENABLE_DEBUG_LOGS=true  # Set to false in production
-LOG_LEVEL=debug  # debug, info, warn, error
-```
-
-### Error Context Requirements
-EVERY error log MUST include:
-- Exact timestamp
-- Function name and source file path
-- Input parameters (sanitize sensitive data)
-- Error message and stack trace
-- Current state/context when error occurred
-- Suggested next steps or troubleshooting hints
+- Import the logger utility: `import { logger } from '@/lib/utils/logger'`
+- Development: Full detailed log, Production: Silent or sanitized
+- Production: Only error log with sanitized data
+- Never log passwords, tokens, or personal info in production
+- Include source file path and function name in all logs
 
 ## TypeScript Rules
 - Use strict TypeScript configuration
 - Define interfaces for all API responses
 - Type all function parameters and return values
 - Use proper error types
+- Type Redux mutations with proper generics
 
 ## Import Rules
 - Use absolute imports with @ alias
-- Import server functions from `/lib/server-functions`
-- Import Redux hooks from `/lib/redux/store`
+- Import Redux hooks from `/lib/redux/apiSlice`
 - Import types from `/lib/types`
+- Import logger from `/lib/utils/logger`
 
 ## Security & Authentication
 - All protected routes must check authentication in middleware
 - Token refresh must be handled in Redux API slice
 - Never store sensitive data in localStorage
 - Use secure cookies for tokens
+- Sanitize all data in production logs
 
 ## Performance
 - Use Next.js dynamic imports for large components
-- Implement proper loading states
+- Implement proper loading states with Redux `isLoading`
 - Use React.memo for expensive components
 - Optimize images with Next.js Image component
+- Use Redux query caching for frequently accessed data
 
 ## Documentation Requirements
 
@@ -587,71 +536,73 @@ EVERY error log MUST include:
    - File: `app/(auth)/login/components/LoginForm.tsx`
    - Function: `handleSubmit`
    
-2. Hook processes login
+2. Hook processes login with Redux mutation
    - File: `app/(auth)/login/hooks/useLogin.ts`
    - Function: `handleLogin`
+   - Redux: `useLoginMutation` with `{data, isLoading, error}`
    - Debug: Check console for "HOOK:useLogin - STARTED"
-   
-3. Redux API call
+
+3. Redux API call to Next.js API route
    - File: `lib/redux/apiSlice.ts`
    - Endpoint: `login` mutation
    - URL: `/api/auth/login`
    - Debug: Check Network tab for API call
    
-4. API Route handles request
+4. API Route handles request and calls backend directly
    - File: `app/api/auth/login/route.ts`
    - Function: `POST`
    - Debug: Check terminal for "API_ROUTE:auth/login - STARTED"
    
-5. Server function processes
-   - File: `lib/server-functions/auth/loginUser.ts`
-   - Function: `loginUser`
-   - Debug: Check terminal for "SERVER_FUNCTION:loginUser - CALLING_BACKEND"
-   
-6. Backend API call
+5. Direct backend API call
    - External API: `${BACKEND_URL}/auth/login`
-   - Debug: Check terminal for backend response
+   - Debug: Check terminal for "API_ROUTE:auth/login - CALLING_BACKEND"
 
 ### Error Tracing Guide
 If login fails, check logs in this order:
 1. Browser console: Hook and component errors
-2. Terminal: API route errors
-3. Terminal: Server function errors
-4. Network tab: Backend response
+2. Redux DevTools: API state and errors
+3. Network tab: Frontend API call status
+4. Terminal: API route errors and backend responses
 ```
 
 ### Code Comments Requirements
 - EVERY complex function MUST have JSDoc comments
 - EVERY API route MUST document expected input/output
-- EVERY server function MUST document backend endpoint it calls
-- EVERY hook MUST document its purpose and dependencies
+- EVERY API route MUST document backend endpoint it calls
+- EVERY hook MUST document its Redux dependencies
 
 ```typescript
 /**
- * Authenticates user credentials against backend API
- * @param credentials - User email and password
- * @returns Promise<AuthResponse> - User data and JWT token
- * @throws Error when backend authentication fails
+ * Handles user login with Redux mutation and automatic state management
+ * @returns Object with handleLogin function and Redux state {data, isLoading, error}
+ * 
+ * Usage:
+ * - const {handleLogin, data, isLoading, error} = useLogin()
+ * - Access loading state with isLoading
+ * - Access response data with data
+ * - Handle errors with error object
  * 
  * Debugging:
- * - Check terminal for "SERVER_FUNCTION:loginUser" logs
- * - Backend endpoint: POST /auth/login
- * - Common errors: Invalid credentials (401), Server error (500)
+ * - Check console for "HOOK:useLogin" logs
+ * - Check Redux DevTools for mutation state
+ * - API endpoint: POST /api/auth/login
  */
-export async function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
+export function useLogin() {
+  const [loginUser, { data, isLoading, error }] = useLoginMutation()
   // Implementation with full logging
 }
 ```
 
 ## Don't Do
 - Never put route-specific components in global `/components`
-- Never make direct backend calls from API routes
-- Never bypass the Redux API slice for requests
-- Never skip comprehensive logging in any function
+- Never make direct backend calls from components
+- Never bypass the Redux API slice for requests from components
 - Never create functions without proper error handling
-- Never use direct fetch in components - use Redux
+- Never use direct fetch in components - use Redux mutations
 - Never mix route-specific code between different routes
 - Never commit code without updating `PROJECT_WORKFLOW.md`
 - Never create functions without JSDoc documentation
 - Never ignore error context in debugging logs
 - Never use generic error messages - always be specific about the source
+- Never create server functions - API routes call backend directly
+- Never handle loading/error states manually - use Redux mutation state

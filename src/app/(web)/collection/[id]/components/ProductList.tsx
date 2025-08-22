@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { useGetProductsQuery } from '@/lib/redux/apiSlice'
 import ProductCard from './ProductCard'
 import ProductFilter from './ProductFilter'
 
@@ -19,87 +20,69 @@ interface ProductListProps {
 const ProductList = ({ categoryId }: ProductListProps) => {
   const [selectedSort, setSelectedSort] = useState('name-asc')
   const [selectedCategory, setSelectedCategory] = useState('')
+  const [isProducts, setIsProducts] = useState(false)
+  const [priceRange, setPriceRange] = useState({
+    min: 0,
+    max: 0
+  })
+  // Get products from API
+  const { data: apiProducts, isLoading, error } = useGetProductsQuery({})
 
-  // Mock products data - replace with actual API call
-  const mockProducts: Product[] = [
-    {
-      id: '1',
-      name: 'Tiger Hawk Pro Headlamp',
-      description: 'Professional grade headlamp with 1000 lumens output, rechargeable battery, and multiple lighting modes.',
-      image: '/hero-section-image.jpg',
-      price: '$89.99',
-      category: 'Indoor'
-    },
-    {
-      id: '2',
-      name: 'Outdoor Adventure Flashlight',
-      description: 'Waterproof flashlight designed for outdoor activities with 800 lumens and long battery life.',
-      image: '/hero-section-image-2.jpg',
-      price: '$65.50',
-      category: 'Outdoor'
-    },
-    {
-      id: '3',
-      name: 'Tactical LED Torch',
-      description: 'Military-grade tactical flashlight with strobe function and durable aluminum construction.',
-      image: '/camping.jpg',
-      price: '$120.00',
-      category: 'Tactical'
-    },
-    {
-      id: '4',
-      name: 'Emergency Backup Light',
-      description: 'Compact emergency light with SOS mode and 72-hour runtime for critical situations.',
-      image: '/security-guard-workspace.jpg',
-      price: '$45.99',
-      category: 'Emergency'
-    },
-    {
-      id: '5',
-      name: 'Professional Work Light',
-      description: 'High-powered work light with adjustable beam and rugged design for construction sites.',
-      image: '/photorealistic-scene-with-warehouse-logistics-operations(1).jpg',
-      price: '$150.00',
-      category: 'Professional'
-    },
-    {
-      id: '6',
-      name: 'Rechargeable Camping Lantern',
-      description: 'Portable camping lantern with USB charging and multiple brightness levels.',
-      image: '/side-view-woman-holding-flashlight.jpg',
-      price: '$75.25',
-      category: 'Camping'
-    },
-    {
-      id: '7',
-      name: 'Compact Pocket Light',
-      description: 'Ultra-compact flashlight perfect for everyday carry with 500 lumens output.',
-      image: '/Bike_Lights_On_Mountain_Mobile_3024x.png',
-      price: '$35.00',
-      category: 'Compact'
-    },
-    {
-      id: '8',
-      name: 'Waterproof Dive Light',
-      description: 'Professional dive light rated for depths up to 100 meters with 1200 lumens.',
-      image: '/portrait-scuba-diver-sea-water-with-marine-life.jpg',
-      price: '$200.00',
-      category: 'Waterproof'
+  // Transform API data to match component interface
+  const transformedProducts: any[] = useMemo(() => {
+    if (!apiProducts?.data) return []
+    return apiProducts.data
+    .filter((product: any) => Number(product.main_category?.id) === Number(categoryId))
+    .map((product: any) => ({
+      id: product.id || product.product_id,
+      name: product.name,
+      description: product.description,
+      image: product.images?.[0] ? product.images[0] : '/hero-section-image.jpg', // Fallback image
+      price: `$${product.price}`,
+      category: product.sub_category?.name || 'Uncategorized'
+    }))
+  }, [apiProducts])
+
+  useEffect(() => {
+    if (transformedProducts.length > 0) {
+      setIsProducts(true)
+    }else{
+      setIsProducts(false)
     }
-  ]
-
+  }, [transformedProducts])
+  
   // Get unique categories for filter
   const categories = useMemo(() => {
-    return [...new Set(mockProducts.map(product => product.category))]
-  }, [])
-
+    return [...new Set(transformedProducts.map(product => product.category))]
+  }, [transformedProducts])
+console.log("categories", transformedProducts)
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = mockProducts
+    let filtered = transformedProducts
 
     // Filter by category
     if (selectedCategory) {
       filtered = filtered.filter(product => product.category === selectedCategory)
+    }
+
+    //Filter by price range
+    if (priceRange.min > 0 || priceRange.max > 0) {
+    if (priceRange.min > 0 && priceRange.max === 0) {
+      filtered = filtered.filter(product => {
+        const price = parseFloat(product.price.replace('$', ''))
+        return price >= priceRange.min
+      })
+    } else if (priceRange.min === 0 && priceRange.max > 0) {
+      filtered = filtered.filter(product => {
+        const price = parseFloat(product.price.replace('$', ''))
+        return price <= priceRange.max
+      })
+    } else if (priceRange.min > 0 && priceRange.max > 0) {
+      filtered = filtered.filter(product => {
+        const price = parseFloat(product.price.replace('$', ''))
+        return price >= priceRange.min && price <= priceRange.max
+      })
+    }
     }
 
     // Sort products
@@ -120,7 +103,49 @@ const ProductList = ({ categoryId }: ProductListProps) => {
       default:
         return filtered
     }
-  }, [mockProducts, selectedCategory, selectedSort])
+  }, [transformedProducts, selectedCategory, selectedSort, priceRange])
+
+  console.log("transformedProducts", transformedProducts)
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="bg-white">
+        <div className="wrapper py-16">
+          <p className='text-black font-bold text-[30px]'>COLLECTION</p>
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Loading products...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="bg-white">
+        <div className="wrapper py-16">
+          <p className='text-black font-bold text-[30px]'>COLLECTION</p>
+          <div className="text-center py-12">
+            <p className="text-red-500 text-lg">Error loading products. Please try again.</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if(!isProducts){
+    return (
+      <div className="bg-white">
+        <div className="wrapper py-16">
+          <p className='text-black font-bold text-[30px]'>COLLECTION</p>
+          <div className="text-center py-12">
+            <p className="text-red-500 text-lg">No products found matching your criteria.</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="bg-white">
@@ -133,17 +158,18 @@ const ProductList = ({ categoryId }: ProductListProps) => {
           onSortChange={setSelectedSort}
           onCategoryChange={setSelectedCategory}
           categories={categories}
+          priceRange={setPriceRange}
         />
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-5">
           {filteredAndSortedProducts.map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
               name={product.name}
               description={product.description}
-              image={product.image}
+              image={product?.image || []}
               price={product.price}
               category={product.category}
             />

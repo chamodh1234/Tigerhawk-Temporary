@@ -1,38 +1,34 @@
 'use client'
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { useAppSelector } from '@/lib/redux/store'
+
+interface Product {
+  id: string
+  name: string
+  images: any[]
+}
+
+interface ProductImageGalleryProps {
+  product: Product
+}
 
 /**
  * Component for displaying product image gallery with zoom functionality
- * Uses Redux state for product data
+ * Uses product prop for data
  * 
  * Debugging:
- * - Check Redux DevTools for product state
  * - Check console for component render logs
  */
-const ProductImageGallery = () => {
+const ProductImageGallery = ({ product }: ProductImageGalleryProps) => {
   const [selectedImage, setSelectedImage] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false)
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 })
   const [showAllThumbnails, setShowAllThumbnails] = useState(false)
-  
-  const { currentProduct } = useAppSelector((state) => state.product)
-
-  if (!currentProduct) {
-    return (
-      <div className="space-y-3 sm:space-y-4">
-        <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] bg-gray-200 flex items-center justify-center">
-          <p className="text-gray-500 text-sm sm:text-base">Loading images...</p>
-        </div>
-      </div>
-    )
-  }
 
   const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
-    const x = ((e.clientX - rect.left) / rect.width) * 100
-    const y = ((e.clientY - rect.top) / rect.height) * 100
+    const x = ((e.clientX - rect.left ) / rect.width) * 100
+    const y = ((e.clientY - rect.top + 10) / rect.height) * 100
     setZoomPosition({ x, y })
     setIsZoomed(true)
   }
@@ -40,6 +36,8 @@ const ProductImageGallery = () => {
   const handleImageLeave = () => {
     setIsZoomed(false)
   }
+
+  
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -51,38 +49,55 @@ const ProductImageGallery = () => {
           onMouseLeave={handleImageLeave}
         >
           <div className="relative w-full h-full">
-            <div
-              className="absolute inset-0 z-0"
+            {/* Blurred background image */}
+            <img
+              src={product.images[selectedImage]}
+              alt={`${product.name} - Blurred Background`}
               style={{
-                backgroundImage: `url(${currentProduct.images[selectedImage]})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(16px)',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                filter: 'blur(24px) brightness(0.9)',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 0,
+                pointerEvents: 'none',
+                userSelect: 'none',
               }}
               aria-hidden="true"
+              draggable={false}
             />
-            <Image
-              src={currentProduct.images[selectedImage]}
-              alt={`${currentProduct.name} - Image ${selectedImage + 1}`}
-              fill
-              className="object-contain z-10"
-              priority
+            {/* Foreground clear image */}
+            <img
+              src={product.images[selectedImage]}
+              alt={`${product.name} - Image ${selectedImage + 1}`}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'center',
+                position: 'relative',
+                zIndex: 1,
+                background: 'transparent',
+              }}
+              className="object-contain"
             />
           </div>
-          
           {/* Zoom Overlay - Hidden on mobile */}
           {isZoomed && (
-            <div className="absolute inset-0 pointer-events-none hidden md:block z-20">
+            <div className="absolute inset-0 pointer-events-none md:block z-10">
               <div
                 className="absolute w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 bg-white border-2 border-gray-300 shadow-xl"
                 style={{
                   left: `${zoomPosition.x}%`,
                   top: `${zoomPosition.y}%`,
                   transform: 'translate(-50%, -50%)',
-                  backgroundImage: `url(${currentProduct.images[selectedImage]})`,
+                  backgroundImage: `url(${product.images[selectedImage]})`,
                   backgroundSize: '800%',
                   backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                  backgroundRepeat: 'no-repeat'
+                  backgroundRepeat: 'no-repeat',
                 }}
               />
             </div>
@@ -92,7 +107,7 @@ const ProductImageGallery = () => {
 
       {/* Thumbnail Gallery */}
       <div className="grid grid-cols-5 gap-2 sm:gap-3">
-        {currentProduct.images.slice(0, 5).map((image, index) => (
+        {product.images.slice(0, 5).map((image, index) => (
           <button
             key={index}
             onClick={() => setSelectedImage(index)}
@@ -102,40 +117,40 @@ const ProductImageGallery = () => {
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <Image
+            <img
               src={image}
-              alt={`${currentProduct.name} - Thumbnail ${index + 1}`}
-              fill
-              className="object-cover"
+              alt={`${product.name} - Thumbnail ${index + 1}`}
+              
+              className="object-cover overflow-hidden w-full h-full"
             />
           </button>
         ))}
         
         {/* Show remaining images when there are more than 5 */}
-        {currentProduct.images.length > 5 && !showAllThumbnails && (
+        {product.images.length > 5 && !showAllThumbnails && (
           <button
             onClick={() => setShowAllThumbnails(true)}
             className="relative h-16 sm:h-18 md:h-20 border-2 border-gray-200 hover:border-gray-300 transition-all duration-200"
           >
             <Image
-              src={currentProduct.images[5]}
-              alt={`${currentProduct.name} - Thumbnail 6`}
+              src={product.images[5]}
+              alt={`${product.name} - Thumbnail 6`}
               fill
-              className="object-cover"
+              className="object-contain overflow-hidden"
             />
             {/* Low opacity black background with + number */}
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="text-white text-xs sm:text-sm font-bold">
-                +{currentProduct.images.length - 5}
+                +{product.images.length - 5}
               </div>
             </div>
           </button>
         )}
 
         {/* Show all remaining images when expanded */}
-        {showAllThumbnails && currentProduct.images.length > 5 && (
+        {showAllThumbnails && product.images.length > 5 && (
           <>
-            {currentProduct.images.slice(5, 10).map((image, index) => (
+            {product.images.slice(5, 10).map((image, index) => (
               <button
                 key={index + 5}
                 onClick={() => setSelectedImage(index + 5)}
@@ -147,9 +162,9 @@ const ProductImageGallery = () => {
               >
                 <Image
                   src={image}
-                  alt={`${currentProduct.name} - Thumbnail ${index + 6}`}
+                  alt={`${product.name} - Thumbnail ${index + 6}`}
                   fill
-                  className="object-cover"
+                  className="object-contain overflow-hidden"
                 />
               </button>
             ))}

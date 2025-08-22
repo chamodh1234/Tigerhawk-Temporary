@@ -1,22 +1,23 @@
 'use client'
 import React from 'react'
-import { useAppSelector } from '@/lib/redux/store'
 
-const ProductComparison = () => {
-  const { currentProduct } = useAppSelector((state) => state.product)
+interface Product {
+  id: string
+  name: string
+  comparisonData: Array<{
+    specification: string
+    tigerhawk: string
+    typical: string
+  }>
+}
 
-  if (!currentProduct) {
-    return (
-      <div className="bg-white border-t border-black pt-4 sm:pt-6">
-        <div className="text-center py-8 sm:py-12">
-          <p className="text-gray-500 text-sm sm:text-base">Loading comparison data...</p>
-        </div>
-      </div>
-    )
-  }
+interface ProductComparisonProps {
+  product: Product
+}
 
-  // Use comparison data from Redux product state
-  const comparisonData = currentProduct.comparisonData || []
+const ProductComparison = ({ product }: ProductComparisonProps) => {
+  // Use comparison data from product prop
+  const comparisonData = product.comparisonData || []
 
   return (
     <div className="bg-white border-black pt-4 ">

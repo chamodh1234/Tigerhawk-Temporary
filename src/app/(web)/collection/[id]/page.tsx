@@ -1,17 +1,10 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import { useSelector, useDispatch } from 'react-redux'
+import { useGetMainCategoriesQuery, useGetSubCategoriesQuery } from '@/lib/redux/apiSlice'
+import { setMainCategories, setSubCategories } from '@/lib/redux/slices/categorySlice'
 import Image from 'next/image'
-import Camping from '@/public/camping.jpg'
-import Security from '@/public/security-guard-workspace.jpg'
-import Emergency from '@/public/side-view-woman-holding-flashlight.jpg'
-import Construction from '@/public/photorealistic-scene-with-warehouse-logistics-operations(1).jpg'
-import Riding from '@/public/Bike_Lights_On_Mountain_Mobile_3024x.png'
-import Diving from '@/public/portrait-scuba-diver-sea-water-with-marine-life.jpg'
-import Medical from '@/public/optometry-consultation-medical-office-with-indian-expert.jpg'
-import Repairs from '@/public/s-l1200.jpg'
-import Fishing from '@/public/Ledlenser-HF8R-SIGNATURE-Rechargeable-Head-Torch-2.png'
-import NightSearch from '@/public/seeking-your-input-for-our-upcoming-ec500-long-range-v0-o2otujj0c6zc1.png'
 import ProductList from './components/ProductList'
 import GallerySection from '../../components/GallerySection'
 import VideoSection from '../../components/VideoSection'
@@ -19,101 +12,69 @@ import VideoSection from '../../components/VideoSection'
 const CollectionPage = () => {
   const params = useParams()
   const categoryId = params.id as string
+  const dispatch = useDispatch()
 
-  // Mock data - replace with actual data fetching
+  console.log("categoryId",categoryId)
+  // Get categories from Redux store
+  const { mainCategories, subCategories } = useSelector((state: any) => state.category)
+  
+  // Fetch categories if not in store
+  const { data: categoriesData, isLoading: mainCategoriesLoading } = useGetMainCategoriesQuery(undefined)
+  
+  // Fetch subcategories for the current main category
+  const { data: subCategoriesData, isLoading: subCategoriesLoading } = useGetSubCategoriesQuery(undefined)
+
+  // Update Redux store when main categories data is fetched
+  useEffect(() => {
+    if (categoriesData?.data && mainCategories.length === 0) {
+      dispatch(setMainCategories(categoriesData.data))
+    }
+  }, [categoriesData, mainCategories, dispatch])
+
+  // Update Redux store when subcategories data is fetched
+  useEffect(() => {
+  console.log("subCategoriesData",subCategoriesData?.data)
+    if (subCategoriesData?.data && subCategories.length === 0) {
+      dispatch(setSubCategories(subCategoriesData?.data))
+    }
+  }, [subCategoriesData, subCategories, dispatch])
+
+  // Find the current category
+  const currentCategory = mainCategories?.find((cat: any) => cat.id.toString() === categoryId)
+
+  console.log("currentCategory",mainCategories)
+  // Filter subcategories for the current main category
+  const currentSubCategories = subCategories?.filter((sub: any) => 
+    sub.main_category_id.toString() === categoryId
+  ) || []
+console.log("currentSubCategories",currentSubCategories)  
+  // Category data
   const categoryData = {
     id: categoryId,
-    name: getCategoryName(categoryId),
-    image: '/hero-section-image.jpg', // Replace with actual category image
-    description: 'Explore our premium collection of lighting solutions designed for professionals and enthusiasts alike.'
+    name: currentCategory?.name || 'COLLECTION',
+    image: currentCategory?.image || '/hero-section-image.jpg',
+    description: 'Explore our premium collection of lighting solutions designed for professionals and enthusiasts alike.',
+    banner: currentCategory?.banner || '/hero-section-image.jpg'
   }
 
-  // Subcategories data based on main category
-  const getSubcategories = (categoryId: string) => {
-    const subcategoriesMap: { [key: string]: Array<{name: string, image: any}> } = {
-      'headlamp': [
-        { name: 'Indoor', image: Camping },
-        { name: 'Outdoor', image: Security },
-        { name: 'Handheld', image: Emergency },
-        { name: 'Rechargeable', image: Construction },
-        { name: 'Tactical', image: Riding }
-      ],
-      'flashlight': [
-        { name: 'Compact', image: Diving },
-        { name: 'High Power', image: Medical },
-        { name: 'Waterproof', image: Repairs },
-        { name: 'Professional', image: Fishing },
-        { name: 'Emergency', image: NightSearch }
-      ],
-      'lantern': [
-        { name: 'Camping', image: Camping },
-        { name: 'Emergency', image: Emergency },
-        { name: 'Portable', image: Security },
-        { name: 'Rechargeable', image: Construction },
-        { name: 'LED', image: Riding }
-      ],
-      'tactical': [
-        { name: 'Military Grade', image: Diving },
-        { name: 'Law Enforcement', image: Medical },
-        { name: 'Search & Rescue', image: Repairs },
-        { name: 'Professional', image: Fishing },
-        { name: 'Heavy Duty', image: NightSearch }
-      ],
-      'emergency': [
-        { name: 'First Responder', image: Camping },
-        { name: 'Disaster Relief', image: Emergency },
-        { name: 'Medical', image: Security },
-        { name: 'Safety', image: Construction },
-        { name: 'Backup', image: Riding }
-      ],
-      'outdoor': [
-        { name: 'Hiking', image: Diving },
-        { name: 'Camping', image: Medical },
-        { name: 'Fishing', image: Repairs },
-        { name: 'Hunting', image: Fishing },
-        { name: 'Adventure', image: NightSearch }
-      ],
-      'professional': [
-        { name: 'Construction', image: Camping },
-        { name: 'Industrial', image: Emergency },
-        { name: 'Security', image: Security },
-        { name: 'Maintenance', image: Construction },
-        { name: 'Commercial', image: Riding }
-      ]
-    }
-    return subcategoriesMap[categoryId] || [
-      { name: 'General', image: Camping },
-      { name: 'Standard', image: Emergency },
-      { name: 'Premium', image: Security }
-    ]
+  if (mainCategoriesLoading || subCategoriesLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-lg">Loading category...</p>
+      </div>
+    )
   }
-
-  function getCategoryName(id: string): string {
-    const categories: { [key: string]: string } = {
-      'headlamp': 'HEADLAMP SERIES',
-      'flashlight': 'FLASHLIGHT COLLECTION',
-      'lantern': 'LANTERN MODELS',
-      'tactical': 'TACTICAL LIGHTING',
-      'emergency': 'EMERGENCY LIGHTING',
-      'outdoor': 'OUTDOOR ADVENTURE',
-      'professional': 'PROFESSIONAL SERIES'
-    }
-    return categories[id] || 'COLLECTION'
-  }
-
-  const subcategories = getSubcategories(categoryId)
 
   return (
     <>
       <section className=" text-white">
         {/* Banner Section */}
         <div className="relative w-full h-[300px] overflow-hidden ">
-          <Image
-            src={categoryData.image}
+          <img
+            src={categoryData.banner}
             alt={categoryData.name}
-            fill
-            className="object-cover"
-            priority
+            className="object-center"
+            
           />
           {/* Overlay for better text readability */}
           <div className="absolute inset-0 bg-black/40"></div>
@@ -132,9 +93,9 @@ const CollectionPage = () => {
             <h2 className="text-[40px] font-bold  mb-12">USAGE</h2>
             
             <div className="grid xl:grid-cols-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {subcategories.map((subcategory) => (
+              {currentSubCategories.map((subcategory: any) => (
                 <div
-                  key={subcategory.name}
+                  key={subcategory.id}
                   className="relative cursor-pointer"
                 >
                   <div className="absolute bottom-5 text-black font-bold flex justify-center w-full text-center py-3">
@@ -146,7 +107,7 @@ const CollectionPage = () => {
                   </div>
                   
                   {subcategory.image && (
-                    <Image 
+                    <img 
                       src={subcategory.image}
                       alt={subcategory.name}
                       className="object-cover object-center h-[400px] w-full"

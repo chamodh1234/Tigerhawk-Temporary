@@ -12,7 +12,7 @@ import ProductImages from './components/ProductImages'
 
 /**
  * Dynamic product page component
- * Uses Redux for state management and route-specific hooks
+ * Uses useProduct hook for data management
  * 
  * Debugging:
  * - Check console for "HOOK:useProduct" logs
@@ -59,9 +59,9 @@ const ProductPage = () => {
             <nav className="text-xs sm:text-sm text-gray-500">
               <span>Home</span>
               <span className="mx-1 sm:mx-2">/</span>
-              <span>Collection</span>
+              <span>{product?.category}</span>
               <span className="mx-1 sm:mx-2">/</span>
-              <span>{product.category}</span>
+              <span>{product?.subcategory}</span>
               <span className="mx-1 sm:mx-2">/</span>
               <span className="text-gray-900 truncate">{product.name}</span>
             </nav>
@@ -70,19 +70,18 @@ const ProductPage = () => {
           {/* Main Product Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
             {/* Left Column - Image Gallery */}
-            <ProductImageGallery />
+            <ProductImageGallery product={product} />
             
             {/* Right Column - Product Details */}
-            <ProductDetails />
+            <ProductDetails product={product} />
           </div>
 
           {/* Product Information Section - Below main layout */}
           <div className="mt-8 sm:mt-10 lg:mt-12">
-            <ProductInfo />
+            <ProductInfo product={product} />
           </div>
-  <div>
-          <ProductImages />
-
+          <div>
+            <ProductImages product={product} />
           </div>
 {/* 
           <div>
@@ -90,7 +89,7 @@ const ProductPage = () => {
           </div> */}
           {/* Product Review Section */}
           <div className="mt-8 sm:mt-10 lg:mt-12">
-            <ProductReviewSection />
+            <ProductReviewSection product={product} />
           </div>
 
         

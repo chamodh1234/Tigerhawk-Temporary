@@ -9,14 +9,14 @@ import Image from 'next/image'
 const Responsible = () => {
   return (
     <>
-      <section className=" text-white">
+      <section className=" text-white mt-[150px]">
         {/* Hero Header */}
         <div className="text-black p-12 md:p-20">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl md:text-[65px] font-bold  text-center mb-4 tracking-tight">
-              WHO RESPONSIBLE FOR TIGER HAWK
+            <h2 className="text-5xl text-black md:text-[75px] font-bold  text-center mb-4 tracking-tight">
+              ONE GLOBE INDUSTRIES (PVT) LTD
             </h2>
-            <p className="text-xl md:text-[20px]  text-center max-w-4xl mx-auto font-light">
+            <p className="text-xl md:text-[18px]  text-center max-w-4xl mx-auto ">
               We are the passionate team behind Tiger Hawk, dedicated to illuminating your world with innovative lighting solutions.
             </p>
           </div>
@@ -26,7 +26,7 @@ const Responsible = () => {
         <div className="bg-white text-black">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="p-12 md:p-20 bg-black text-white">
+              <div className="p-12 md:p-20 bg-blue-600 text-white">
                 <div className="w-16 h-16 bg-white/20 rounded-none flex items-center justify-center mb-8">
                   <Image src={Trusted} alt='Our Mission' className='w-10 h-10'/>
                 </div>
@@ -55,7 +55,7 @@ const Responsible = () => {
                   Our diverse team brings together decades of experience in lighting technology, design, and engineering. We're united by a passion for excellence.
                 </p>
               </div>
-              <div className="p-12 md:p-20 bg-black">
+              <div className="p-12 md:p-20 bg-blue-600">
                 <div className="w-16 h-16 bg-white/20 rounded-none flex items-center justify-center mb-8">
                   <Image src={Calendar} alt='Our Team' className='w-10 h-10'/>
                 </div>
@@ -113,7 +113,7 @@ const Responsible = () => {
                 <Image src={Trusted} alt='Our Responsibility' className='w-12 h-12'/>
               </div>
               <h3 className="text-5xl md:text-6xl font-black mb-8 tracking-tight">Our Responsibility</h3>
-              <p className="text-xl md:text-2xl text-indigo-100 leading-relaxed max-w-4xl mx-auto font-light">
+              <p className="text-xl md:text-2xl leading-relaxed max-w-4xl mx-auto font-light">
                 As industry leaders, we take responsibility for setting standards in quality, safety, and environmental sustainability. 
                 We're accountable to our customers, employees, and the communities we serve.
               </p>

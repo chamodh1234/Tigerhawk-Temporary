@@ -52,9 +52,9 @@ const BeniftsSection = () => {
             <p className='flex justify-center mt-20 text-[40px] font-bold'>BENIFITS THAT YOU GET</p>
 
             <div className='grid w-full xl:max-w-[1200px] xl:grid-cols-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 wrapper mb-10 gap-3 mt-20 '>
-            {Categories.map((category) => (
+            {Categories.map((category,index) => (
                 <div
-                    key={category.name}
+                    key={index}
                     className="relative group w-full h-[600px] overflow-hidden"
                 >
                     {category.image && (

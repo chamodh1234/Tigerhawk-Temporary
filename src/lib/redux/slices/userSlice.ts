@@ -6,7 +6,7 @@ interface UserProfile {
   name: string
   avatar?: string
   bio?: string
-  preferences: {
+  preferences?: {
     theme: 'light' | 'dark'
     notifications: boolean
     language: string

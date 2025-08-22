@@ -1,14 +1,22 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useGetProductsForInquiryQuery, useSubmitInquiryMutation } from '@/lib/redux/apiSlice'
+import type { InquiryFormData, ProductForInquiry } from '@/lib/types/inquiry'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Inquiry = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<InquiryFormData>({
     name: '',
     email: '',
     contactNumber: '',
     product: '',
     message: ''
   })
+
+  // API hooks
+  const { data: productsData, isLoading: productsLoading, error: productsError } = useGetProductsForInquiryQuery(undefined)
+  const [submitInquiry, { isLoading: submitting }] = useSubmitInquiryMutation()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -18,15 +26,51 @@ const Inquiry = () => {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', formData)
+    
+    if (!formData.name.trim() || !formData.email.trim() || !formData.contactNumber.trim() || !formData.product || !formData.message.trim()) {
+      toast.error('Please fill in all required fields.')
+      return
+    }
+
+    try {
+      const inquiryData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.contactNumber,
+        product_id: parseInt(formData.product),
+        message: formData.message
+      }
+        
+      const result = await submitInquiry(inquiryData).unwrap()
+      
+            if (result.success) {
+        console.log('Showing success toast:', result.message)
+        toast.success(result.message)
+        console.log(result)
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          contactNumber: '',
+          product: '',
+          message: ''
+        })
+      } else {
+        console.log('Showing error toast:', result.message)
+        toast.error(result.message || 'Failed to submit inquiry')
+      }
+    } catch (error: any) {
+      console.error('Failed to submit inquiry:', error)
+      console.log('Showing catch error toast:', error?.data?.message)
+      toast.error(error?.data?.message || 'Failed to submit inquiry. Please try again.')
+    }
   }
 
   return (
     <>
-      <section className="wrapper mt-[150px] mb-[150px] ">
+      <section className="wrapper mt-[250px] mb-[250px] ">
         {/* Header */}
         <div className="">
           <div className="max-w-7xl mx-auto">
@@ -181,18 +225,21 @@ const Inquiry = () => {
                         value={formData.product}
                         onChange={handleChange}
                         required
-                        className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none"
+                        disabled={productsLoading}
+                        className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none disabled:opacity-50"
                       >
-                        <option value="">Choose a product</option>
-                        <option value="headlamp">Headlamp Series</option>
-                        <option value="flashlight">Flashlight Collection</option>
-                        <option value="lantern">Lantern Models</option>
-                        <option value="tactical">Tactical Lighting</option>
-                        <option value="emergency">Emergency Lighting</option>
-                        <option value="outdoor">Outdoor Adventure</option>
-                        <option value="professional">Professional Series</option>
-                        <option value="other">Other Products</option>
+                        <option value="">
+                          {productsLoading ? 'Loading products...' : 'Choose a product'}
+                        </option>
+                        {productsData?.data?.map((product: ProductForInquiry) => (
+                          <option key={product.id} value={product.id.toString()}>
+                            {product.name}
+                          </option>
+                        ))}
                       </select>
+                      {productsError && (
+                        <p className="text-red-500 text-sm mt-1">Failed to load products. Please try again.</p>
+                      )}
                     </div>
                   </div>
 
@@ -217,9 +264,10 @@ const Inquiry = () => {
                   <div className="text-center">
                     <button
                       type="submit"
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl py-4 px-12 transition-colors duration-300"
+                      disabled={submitting}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl py-4 px-12 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      SUBMIT INQUIRY
+                      {submitting ? 'SUBMITTING...' : 'SUBMIT INQUIRY'}
                     </button>
                   </div>
                 </form>
