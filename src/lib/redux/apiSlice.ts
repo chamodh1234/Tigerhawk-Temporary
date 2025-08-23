@@ -145,7 +145,7 @@ export const apiSlice = createApi({
       invalidatesTags: (result, error, { productId }) => [{ type: 'Reviews', id: productId }],
     }),
     getProductsForInquiry: builder.query({
-      query: () => '/inquiry',
+      query: () => '/products/inquiry/list',
       providesTags: ['Products'],
     }),
     submitInquiry: builder.mutation({

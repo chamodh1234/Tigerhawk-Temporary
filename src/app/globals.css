@@ -121,7 +121,7 @@
 
 /* Wrapper class for consistent layout */
 .wrapper {
-  @apply max-w-[1500px] mx-auto px-4 sm:px-3 lg:px-8;
+  @apply max-w-[1800px] mx-auto px-4 sm:px-3 lg:px-8;
 }
 
 
@@ -166,4 +166,8 @@
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
+}
+
+.primay-color-bg{
+ @apply bg-yellow-300;
 }

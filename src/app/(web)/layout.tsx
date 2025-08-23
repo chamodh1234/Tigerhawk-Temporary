@@ -6,31 +6,31 @@ import 'react-toastify/dist/ReactToastify.css'
 import Loading from './profile/loading'
 
 interface WebLayoutProps {
-	children: ReactNode
+  children: ReactNode
 }
 
-export function WebLayout ({ children }: WebLayoutProps) {
-	return (
-		<>
-        <Navbar/>
-        <main className='mt-[70px]'>
-        <Suspense fallback={<Loading/>}>
-        {children}
+export function WebLayout({ children }: WebLayoutProps) {
+  return (
+    <>
+      <Navbar />
+      <main className=''>
+        <Suspense fallback={<Loading />}>
+          {children}
         </Suspense>
-        </main>
-        <Footer/>
-        <ToastContainer 
-          position="top-right" 
-          autoClose={3000} 
-          hideProgressBar={false} 
-          newestOnTop 
-          closeOnClick 
-          pauseOnFocusLoss 
-          draggable 
-          pauseOnHover 
-        />
-        </>
-	)
+      </main>
+      <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
+  )
 }
 
 export default WebLayout

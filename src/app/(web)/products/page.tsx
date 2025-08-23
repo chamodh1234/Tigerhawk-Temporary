@@ -49,7 +49,7 @@ const ProductsPage = () => {
     }
 
     // Sort products
-    filtered.sort((a: any, b: any) => {
+    const sortedProducts = [...filtered].sort((a: any, b: any) => {
       let aValue, bValue
 
       switch (sortBy) {
@@ -77,7 +77,7 @@ const ProductsPage = () => {
       }
     })
 
-    return filtered
+    return sortedProducts
   }, [productsData?.data, searchTerm, selectedMainCategory, selectedSubCategory, sortBy, sortOrder])
 
   // Pagination

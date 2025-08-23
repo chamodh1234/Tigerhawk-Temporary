@@ -7,29 +7,30 @@ import GallerySection from './components/GallerySection'
 import VideoSection from './components/VideoSection'
 import Responsible from './components/Responsible'
 import Inquiry from './components/Inquiry'
+import PillerBar from './components/PillerBar'
 
 const Page = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-     
-      
+    <div className="min-h-screen flex flex-col" suppressHydrationWarning>
+
+
       {/* Main Content */}
       <main className="flex-1">
         {/* Hero Section */}
-        <HeroSection/>
-
+        <HeroSection />
+        <PillerBar/>
         {/* Features Section */}
-    
-     <CategorySection/>
-      <BeniftsSection/>
-      <GallerySection/>
-      <VideoSection/> 
-      <TigerhawkSection/>
-      <Responsible/>
-      <Inquiry/>
+
+        <CategorySection />
+        <BeniftsSection />
+        <GallerySection />
+        <VideoSection />
+        <TigerhawkSection />
+        <Responsible />
+        <Inquiry />
       </main>
 
-    
+
     </div>
   )
 }

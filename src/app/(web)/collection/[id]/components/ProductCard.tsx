@@ -34,8 +34,7 @@ const ProductCard = ({ id, name, description, image, price, category }: ProductC
           </h3>
 
           {/* Product Description */}
-          <p className="text-sm text-gray-600 mb-3 flex-1 line-clamp-2">
-            {description}
+          <p className="text-sm text-gray-600 mb-3 flex-1 line-clamp-2" dangerouslySetInnerHTML={{ __html: description }}>
           </p>
 
           {/* Price */}
