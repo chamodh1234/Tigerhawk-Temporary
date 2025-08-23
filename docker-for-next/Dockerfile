@@ -11,6 +11,7 @@ RUN npm install
 # Copy source files from src directory
 COPY src .
 
+
 EXPOSE 3000
 
 # Use development mode for live reloading
