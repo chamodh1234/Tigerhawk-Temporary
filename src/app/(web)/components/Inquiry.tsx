@@ -4,6 +4,9 @@ import { useGetProductsForInquiryQuery, useSubmitInquiryMutation } from '@/lib/r
 import type { InquiryFormData, ProductForInquiry } from '@/lib/types/inquiry'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import InquiryImage from '@/public/businessman-shows-his-finger-up.jpg'
+import Image from 'next/image'
+import Link from 'next/link'
 
 const Inquiry = () => {
   const [formData, setFormData] = useState<InquiryFormData>({
@@ -70,13 +73,13 @@ const Inquiry = () => {
 
   return (
     <>
-      <section className="wrapper mt-[250px] mb-[250px] ">
+      <section className="wrapper mt-[250px]  mb-20 lg:mb-0">
         {/* Header */}
         <div className="">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-[60px] font-black text-center mb-4 tracking-tight">
+            {/* <h2 className="text-[60px] font-black text-center mb-4 tracking-tight">
               MAKE AN INQUIRY
-            </h2>
+            </h2> */}
             
           </div>
         </div>
@@ -86,7 +89,7 @@ const Inquiry = () => {
           <div className="">
             <div className="grid grid-cols-1 lg:grid-cols-2 lg:min-h-screen">
               {/* Left Side - Information */}
-              <div className="p-12 md:p-20 bg-gray-50 lg:flex lg:flex-col lg:justify-center">
+              {/* <div className="p-12 md:p-20 bg-gray-50 lg:flex lg:flex-col lg:justify-center">
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 tracking-tight">
@@ -155,19 +158,23 @@ const Inquiry = () => {
                     </div>
                   </div>
                 </div>
+              </div> */}
+
+              <div className='lg:flex hidden items-end'>
+                <Image src={InquiryImage} alt='Inquiry' className='h-[900px] w-[600px]' />
               </div>
 
               {/* Right Side - Form */}
-              <div className="p-20  lg:flex lg:flex-col  ">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <p className='text-2xl font-bold text-gray-900 mb-6'>
+              <div className="  lg:flex lg:flex-col  ">
+                <form onSubmit={handleSubmit} className="space-y-6 ">
+                  <p className='text-[50px] text-center  font-bold text-gray-900 mb-6'>
                     Inquire Form
                   </p>
                   
                   {/* Name and Email Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
                     <div>
-                      <label htmlFor="name" className="block text-lg font-bold text-gray-900 mb-3">
+                      <label htmlFor="name" className="block text-[17px]  text-gray-900 mb-3">
                         Full Name *
                       </label>
                       <input
@@ -177,12 +184,12 @@ const Inquiry = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none"
+                        className="w-full rounded-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg  focus:outline-none"
                         placeholder="Enter your full name"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-lg font-bold text-gray-900 mb-3">
+                      <label htmlFor="email" className="block text-[17px]  text-gray-900 mb-3">
                         Email Address *
                       </label>
                       <input
@@ -192,7 +199,7 @@ const Inquiry = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none"
+                        className="w-full rounded-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg  focus:outline-none"
                         placeholder="Enter your email address"
                       />
                     </div>
@@ -201,7 +208,7 @@ const Inquiry = () => {
                   {/* Contact Number and Product Row */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="contactNumber" className="block text-lg font-bold text-gray-900 mb-3">
+                      <label htmlFor="contactNumber" className="block text-[17px]  text-gray-900 mb-3">
                         Contact Number *
                       </label>
                       <input
@@ -211,12 +218,12 @@ const Inquiry = () => {
                         value={formData.contactNumber}
                         onChange={handleChange}
                         required
-                        className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none"
+                        className="w-full rounded-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg  focus:outline-none"
                         placeholder="Enter your contact number"
                       />
                     </div>
                     <div>
-                      <label htmlFor="product" className="block text-lg font-bold text-gray-900 mb-3">
+                      <label htmlFor="product" className="block text-[17px]  text-gray-900 mb-3">
                         Select Product *
                       </label>
                       <select
@@ -226,7 +233,7 @@ const Inquiry = () => {
                         onChange={handleChange}
                         required
                         disabled={productsLoading}
-                        className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none disabled:opacity-50"
+                        className="w-full rounded-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg  focus:outline-none disabled:opacity-50"
                       >
                         <option value="">
                           {productsLoading ? 'Loading products...' : 'Choose a product'}
@@ -245,7 +252,7 @@ const Inquiry = () => {
 
                   {/* Message */}
                   <div>
-                    <label htmlFor="message" className="block text-lg font-bold text-gray-900 mb-3">
+                        <label htmlFor="message" className="block text-[17px]  text-gray-900 mb-3">
                       Message *
                     </label>
                     <textarea
@@ -255,21 +262,30 @@ const Inquiry = () => {
                       onChange={handleChange}
                       required
                       rows={6}
-                      className="w-full p-4 bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg focus:border-blue-600 focus:outline-none resize-none"
+                      className="w-full p-4 rounded-lg bg-gray-50 border-2 border-gray-300 text-gray-900 text-lg  focus:outline-none resize-none"
                       placeholder="Tell us about your inquiry, requirements, or any specific questions you have about our products..."
                     />
                   </div>
+
+                  <p className='text-[14px] text-gray-900'>
+                    Please provide as much detail as possible so we can assist you effectively. Our team will review your inquiry and get back to you within 1-2 business days.
+                    </p> 
 
                   {/* Submit Button */}
                   <div className="text-center">
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl py-4 px-12 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="rounded-full primary-color-bg font-bold text-xl py-4 px-12 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {submitting ? 'SUBMITTING...' : 'SUBMIT INQUIRY'}
                     </button>
                   </div>
+                  
+                  
+                    
+
+                  
                 </form>
               </div>
             </div>

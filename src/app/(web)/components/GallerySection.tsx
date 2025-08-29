@@ -9,7 +9,7 @@ import Image6 from '@/public/s-l1200.jpg'
 import Image7 from '@/public/closeup-gas-lamp-tent-nature.jpg'
 import Image8 from '@/public/side-view-woman-with-head-lantern.jpg'
 
-const images = [Image1, Image2, Image4, Image5, Image7, Image8]
+const images = [Image1, Image2, Image4, Image5, Image3, Image6]
 
 // Responsive cell styles: simple stacking on mobile, custom grid on md+
 const cellStyles = [

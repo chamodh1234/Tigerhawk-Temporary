@@ -120,14 +120,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+    <div className="flex rounded-lg border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       {/* Product Image */}
-      <div className="relative h-48 bg-gray-100">
+      <div className="relative h-48 w-48 bg-gray-100">
         {product.images && product.images.length > 0 ? (
           <img
             src={product.images[0].url}
             alt={product.name}
-            style={{ width: '100%', height: '100%', objectFit: 'fill' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -136,11 +136,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
         
         {/* Discount Badge */}
-        {product.discount > 0 && (
+        {/* {product.discount > 0 && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-semibold">
             -{product.discount}%
           </div>
-        )}
+        )} */}
         
         {/* Favourites Button */}
         <button
@@ -157,31 +157,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+      <div className="p-4 flex w-full gap-4 justify-between">
+        <div>
+           <h3 className="text-[25px] font-semibold text-gray-900 mb-2 line-clamp-1">
           {product.name}
         </h3>
         
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+        <p className="text-gray-600 text-sm mb-3 line-clamp-[5]">
           {product.description}
         </p>
+        </div>
+       
 
         {/* Price */}
-        <div className="flex items-center gap-2 mb-4">
+        {/* <div className="flex items-center gap-2 mb-4">
           <span className="text-xl font-bold text-gray-900">
-            ${discountedPrice.toFixed(2)}
+            ${Number(discountedPrice).toFixed(2)}
           </span>
           {product.discount > 0 && (
             <span className="text-sm text-gray-500 line-through">
               ${Number(product.price).toFixed(2)}
             </span>
           )}
-        </div>
+        </div> */}
 
         {/* Action Buttons */}
         <div className="space-y-2">
           {/* Add to Cart Button */}
-          <button
+          {/* <button
             onClick={handleAddToCart}
             disabled={isLoading}
             className={`w-full py-2 px-4 font-medium transition-colors ${
@@ -201,24 +204,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {isInCart ? 'Remove from Cart' : 'Add to Cart'}
               </div>
             )}
-          </button>
+          </button> */}
 
           {/* Buy Now Button */}
-          <button
+          {/* <button
             onClick={handleBuyNow}
             disabled={isLoading}
             className="w-full py-2 px-4 bg-green-600 text-white font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
           >
             Buy Now
-          </button>
+          </button> */}
 
           {/* View Details Button */}
           <button
             onClick={handleViewProduct}
-            className="w-full py-2 px-4 border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            className="w-full py-2 px-4 border h-full rounded-lg border-gray-300 text-gray-700 font-medium hover:bg-yellow-300 transition-colors"
           >
             <div className="flex items-center justify-center">
-              <FaEye size={16} className="mr-2" />
+              {/* <FaEye size={16} className="mr-2" /> */}
               View Details
             </div>
           </button>

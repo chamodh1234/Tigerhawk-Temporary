@@ -11,7 +11,7 @@ const PillerBar = () => {
       aria-label="Company Sectors"
       className="w-full flex justify-center mb-[150px]"
     >
-      <ul className="flex flex-wrap gap-[80px] primay-color-bg w-full dark:bg-card   justify-center px-8 py-4">
+      <ul className="flex flex-wrap gap-[80px] primary-color-bg w-full dark:bg-card   justify-center px-8 py-4">
         <li className="flex flex-col justify-center items-center">
            <Image src={Fisherman} alt='Fisherman' className='w-[70px] h-[70px]' />
           <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 mt-2">Fishermen</span>

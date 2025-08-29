@@ -14,10 +14,11 @@ const Footer = () => {
 
   const footerLinks = {
     company: [
-      { name: 'About Us', href: '/about' },
-      { name: 'Our Story', href: '/about/story' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
+      { name: 'Home', href: '/' },
+      { name: 'Products', href: '/collection' },
+      { name: 'About us', href: '/about-us' },
+      { name: 'Contact us', href: '/contact-us' },
+      { name: 'Gallery', href: '/gallery' },
     ],
     services: [
       { name: 'Custom Solutions', href: '/services/custom' },
@@ -41,11 +42,11 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="bg-[#fffb002c] text-black">
+    <footer className="bg-black text-white">
       <div className="wrapper py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {/* Company Info */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
           <div className="flex items-center">
                         <Link href="/" className="flex items-center space-x-2 ">
                             <Image
@@ -82,14 +83,14 @@ const Footer = () => {
           </div>
 
           {/* Company Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
+          <div className='lg:col-span-1 flex flex-col justify-end items-end pe-10'>
+            <h3 className="text-lg font-semibold mb-4">Site Map</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   <Link 
                     href={link.href}
-                    className="  transition-colors"
+                    className="  transition-colors flex justify-end"
                   >
                     {link.name}
                   </Link>
@@ -99,7 +100,7 @@ const Footer = () => {
           </div>
 
           {/* Products Links */}
-          <div>
+          {/* <div>
             <h3 className="text-lg font-semibold mb-4">Products</h3>
             <ul className="space-y-2">
               {mainCategoriesData?.data?.map((category: any) => (
@@ -116,11 +117,11 @@ const Footer = () => {
                 <li className="text-gray-500">Loading categories...</li>
               )}
             </ul>
-          </div>
+          </div> */}
 
           {/* Services & Support */}
-          <div>
-            {/* <h3 className="text-lg font-semibold mb-4">Services</h3>
+          {/* <div>
+            <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-2 mb-6">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
@@ -132,7 +133,7 @@ const Footer = () => {
                   </Link>
                 </li>
               ))}
-            </ul> */}
+            </ul> 
             
             <h3 className="text-lg font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
@@ -147,7 +148,7 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
 
         {/* Bottom Section */}

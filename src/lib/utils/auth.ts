@@ -62,7 +62,7 @@ export function logout(): void {
   localStorage.removeItem('uid')
   
   // Redirect to login page
- // window.location.href = '/auth/signin'
+  window.location.href = '/auth/signin'
 }
 
 // Set user data in localStorage

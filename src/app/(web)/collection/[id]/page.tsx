@@ -90,7 +90,7 @@ console.log("currentSubCategories",currentSubCategories)
         {/* Subcategories Section */}
         <div className=" text-black">
           <div className="wrapper py-16">
-            <h2 className="text-[40px] font-bold  mb-12">USAGE</h2>
+            <h2 className="text-[40px] font-bold  mb-12">Where to use</h2>
             
             <div className="grid xl:grid-cols-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {currentSubCategories.map((subcategory: any) => (
@@ -98,21 +98,19 @@ console.log("currentSubCategories",currentSubCategories)
                   key={subcategory.id}
                   className="relative cursor-pointer"
                 >
-                  <div className="absolute bottom-5 text-black font-bold flex justify-center w-full text-center py-3">
-                    <div className="relative flex justify-center items-center opacity-60 bg-white w-full h-[50px]">
-                    </div>
-                    <p className="absolute w-full h-[50px] transition-all duration-300 flex items-center justify-center hover:bg-blue-800 hover:text-white">
-                      {subcategory.name}
-                    </p>
-                  </div>
+                  
                   
                   {subcategory.image && (
                     <img 
                       src={subcategory.image}
                       alt={subcategory.name}
-                      className="object-cover object-center h-[400px] w-full"
+                      className="object-cover object-center h-[400px] w-full rounded-[30px]"
                     />
-                  )}
+                  )} 
+                  <p className=" w-full  mt-4 transition-all duration-300 flex text-[25px] font-bold ">
+                      {subcategory.name}
+                    </p>
+                    <p className="text-[15px] text-gray-500 line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam sint quis inventore, eligendi totam magnam quam non ratione.</p>
                 </div>
               ))}
             </div>

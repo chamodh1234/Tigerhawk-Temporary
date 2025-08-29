@@ -46,7 +46,8 @@ const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   }
 
   // Show children if authorized
-  if (isAuthorized) {
+  if (isAuthorized && validUser?.success && !isLoading) {
+    console.log('AdminProtected: User authorized, rendering children')
     return <>{children}</>
   }
 

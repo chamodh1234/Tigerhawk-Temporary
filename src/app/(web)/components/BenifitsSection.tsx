@@ -89,7 +89,7 @@ const BeniftsSection = () => {
                                         flex
                                         justify-center
                                         items-end
-                                        primay-color-bg
+                                        primary-color-bg
                                         rounded-b-[22px]
                                         w-full
                                         h-[100px]

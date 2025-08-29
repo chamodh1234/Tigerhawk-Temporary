@@ -127,22 +127,25 @@ console.log("apiFavourites",apiFavourites)
   return (
     <div className="bg-white min-h-screen">
       {/* Header Section */}
-      <section className="text-white">
-        <div className="relative w-full h-[300px] overflow-hidden">
-          <img
-            src="/hero-section-image-2.jpg"
-            alt="Favourites"
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 bg-black/40"></div>
-          
-          <div className="absolute w-full top-1/2 transform -translate-y-1/2">
-            <h1 className="text-4xl wrapper md:text-[60px] font-black tracking-tight text-white">
-              MY FAVOURITES
-            </h1>
-            <p className='text-white text-[15px] wrapper'>
-              Your saved products and preferred items
-            </p>
+      <section className="relative bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-200 text-white py-10 overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('/hero-section-image-2.jpg')] bg-cover bg-center opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="animate-bounce mb-8">
+            <svg className="h-20 w-20 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 animate-fade-in">
+            MY FAVOURITES
+          </h1>
+          <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed animate-slide-up">
+            Your saved products and preferred items
+          </p>
+          <div className="flex justify-center space-x-4">
+            <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+            <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
         </div>
       </section>
@@ -178,15 +181,32 @@ console.log("apiFavourites",apiFavourites)
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {favourites.map((product) => (
-                <div key={product.id} className="bg-white border border-gray-200  flex flex-col shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <div className="relative">
+                <div key={product.id} className="bg-white border rounded-[32px] relative h-[350px]  border-gray-200 flex flex-col shadow-sm hover:shadow-md transition-shadow duration-300 group">
+                  <div className="relative h-full">
                     <Link href={`/product/${product.id}`}>
-                      <div className="relative h-48 overflow-hidden">
+                      <div className="relative h-full overflow-hidden rounded-[30px]">
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
+                        
+                        {/* Product Details Overlay - Appears on Hover */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/95 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-y-full group-hover:translate-y-0 p-4">
+                          <div className="text-center pb-[70px]">
+                            <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                              {product.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-3 line-clamp-2" dangerouslySetInnerHTML={{ __html: product.description }} />
+                           
+                           
+                            <div>
+                              <p className="text-xs text-gray-500">
+                                Added {new Date(product.addedDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </Link>
                     
@@ -202,39 +222,12 @@ console.log("apiFavourites",apiFavourites)
                     </button>
                   </div>
 
-                  <Link href={`/product/${product.id}`}>
-                    <div className="flex-1 p-4 flex flex-col">
-                      <div className="mb-2">
-                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          {product.category}
-                        </span>
-                      </div>
+                  {/* Product Name Only - Always Visible */}
+                 
 
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                        {product.name}
-                      </h3>
-
-                      <p className="text-sm text-gray-600 mb-3 flex-1 line-clamp-2">
-                        {product.description}
-                      </p>
-
-                      <div className="mb-4">
-                        <span className="text-xl font-bold text-blue-600">
-                          {product.price}
-                        </span>
-                      </div>
-
-                      <div className="mb-4">
-                        <p className="text-xs text-gray-500">
-                          Added {new Date(product.addedDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-
-                  <div className="px-4 pb-4">
-                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 transition-colors duration-300">
-                      BUY NOW
+                  <div className=" absolute bottom-0 left-0 right-0 px-4 pb-4">
+                    <button className="w-full rounded-full primary-color-bg font-bold py-3 px-4 transition-colors duration-300">
+                      Read More
                     </button>
                   </div>
                 </div>
@@ -253,6 +246,27 @@ console.log("apiFavourites",apiFavourites)
         draggable 
         pauseOnHover 
       />
+
+      {/* Custom CSS for animations */}
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 1s ease-out;
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 1s ease-out 0.5s both;
+        }
+      `}</style>
     </div>
   )
 }

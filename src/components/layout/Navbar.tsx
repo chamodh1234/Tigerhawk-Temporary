@@ -123,7 +123,7 @@ const Navbar = () => {
                                     onChange={handleSearchInputChange}
                                     onBlur={handleSearchInputBlur}
                                     onFocus={() => searchQuery.length > 0 && setShowSearchDropdown(true)}
-                                    className="w-[300px] h-[40px] px-4 border focus:outline-none rounded-full"
+                                    className="w-[300px] h-[40px] px-4 border border-black focus:outline-none rounded-full"
                                 />
                                 <button
                                     type="submit"
@@ -173,7 +173,7 @@ const Navbar = () => {
                             )}
                         </div>
                            {/* Favorites */}
-                           <Link href="/favourites" className="p-2 text-gray-600 cursor-pointer hover:text-red-500 transition-colors relative">
+                           <Link href="/favourites" className="p-2 hidden md:flex text-gray-600 cursor-pointer hover:text-red-500 transition-colors relative">
                                 <Heart size={20} />
                                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                                     {favouritesCount}
@@ -188,11 +188,11 @@ const Navbar = () => {
                     >
                         {/* Animated background with left curve using div, animating width from right to left */}
                         <div
-                            className="absolute inset-0 pointer-events-none flex items-stretch justify-end"
+                            className="absolute hidden md:flex inset-0 pointer-events-none  items-stretch justify-end"
                             aria-hidden="true"
                         >
                             <div
-                                className="navbar-anim-bg primay-color-bg h-full"
+                                className="navbar-anim-bg primary-color-bg h-full"
                                 style={{
                                     maxWidth: '500px',
                                 }}
@@ -238,7 +238,7 @@ const Navbar = () => {
                         <div className="flex items-center space-x-2">
                          
                             {/* Mobile Search Button */}
-                            <button className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                            <button className="lg:hidden p-2 md:flex hidden text-gray-600 hover:text-blue-600 transition-colors">
                                 <Search size={20} />
                             </button>
 

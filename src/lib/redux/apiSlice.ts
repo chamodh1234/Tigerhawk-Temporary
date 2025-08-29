@@ -18,7 +18,7 @@ export const apiSlice = createApi({
       return headers
     },
   }),
-  tagTypes: ['User', 'Dashboard', 'Auth', 'Favourites', 'Cart', 'Orders', 'EmailSettings', 'Reviews','Messages', 'Products' ],
+  tagTypes: ['User', 'Dashboard', 'Auth', 'Favourites', 'Cart', 'Orders', 'EmailSettings', 'Reviews','Messages', 'Products', 'Inquiries', 'Gallery' ],
   endpoints: (builder) => ({
     // Auth endpoints
     login: builder.mutation({
@@ -147,6 +147,10 @@ export const apiSlice = createApi({
     getProductsForInquiry: builder.query({
       query: () => '/products/inquiry/list',
       providesTags: ['Products'],
+    }),
+    getInquiries: builder.query({
+      query: () => '/inquiry',
+      providesTags: ['Inquiries'],
     }),
     submitInquiry: builder.mutation({
       query: (inquiryData) => ({
@@ -477,6 +481,11 @@ export const apiSlice = createApi({
     }),
 
 
+    getProductImagesForGallery: builder.query({
+      query: () => '/products/images/gallery',
+      providesTags: ['Gallery'],
+    }), 
+
     // Message endpoints
 
   }),
@@ -537,4 +546,6 @@ export const {
   useDeleteMessageMutation,
   useUpdateMessageStatusMutation,
   useReplyToMessageMutation,
+  useGetInquiriesQuery,
+  useGetProductImagesForGalleryQuery,
 } = apiSlice 

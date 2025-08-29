@@ -11,15 +11,18 @@ const HeroSection = () => {
                 {/* <Image src={HeroImage} alt='Hero-section Background Image' className='h-[85vh] object-cover   [object-position:0px_-60px] ' /> */}
                 <div className="wrapper flex w-full justify-center md:mt-[200px] mt-[100px] ">
                     <div className='warpper  flex flex-col items-center md:items-start'>
-                        <h1 className="text-4xl md:text-[80px] text-[60px]  font-bold mb-6 flex flex-col justify-center md:justify-start text-center md:text-start">
+                        <h1 className="text-4xl hidden md:text-[80px] text-[60px]  font-bold mb-6 md:flex flex-col justify-center md:justify-start text-center md:text-start">
                             Light Your Path  <br /> <span className='text-yellow-500 text-center'>with Precision</span>
+                        </h1>
+                        <h1 className="text-4xl  text-[60px]  font-bold mb-6 md:hidden flex flex-col justify-center md:justify-start text-center md:text-start">
+                            Light Your Path with <span className="text-yellow-500">Precision</span>
                         </h1>
                         <p className="text-xl mb-8 max-w-lg md:max-w-xl text-center md:text-center flex justify-center  text-[15px]">
                             Illuminate your adventures with Tiger Hawk's advanced lighting solutions.
                             Trusted performance for every step of your journey.
                         </p>
                         <div className="flex flex-col w-full justify-center sm:flex-row gap-4 ">
-                            <button className="px-8 py-3 text-gray-600 flex items-center gap-2 cursor-pointer duration-300 font-semibold  transition-colors">
+                            <button className="px-8 py-3 text-gray-600  justify-center flex items-center gap-2 cursor-pointer duration-300 font-semibold  transition-colors">
                                <FaMagnifyingGlass size={20} className='me-3'  /> Search more
                             </button>
 

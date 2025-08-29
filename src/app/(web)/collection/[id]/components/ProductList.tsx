@@ -150,19 +150,20 @@ console.log("categories", transformedProducts)
   return (
     <div className="bg-white">
       <div className="wrapper py-16">
-        <p className='text-black font-bold text-[30px]'>COLLECTION</p>
+        <p className='text-black font-bold text-[50px]'>Product Collection</p>
+        <p className='text-gray-500 text-[15px]'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam sint quis inventore, eligendi totam magnam quam non ratione.</p>
         {/* Filter Section */}
-        <ProductFilter
+        {/* <ProductFilter
           selectedSort={selectedSort}
           selectedCategory={selectedCategory}
           onSortChange={setSelectedSort}
           onCategoryChange={setSelectedCategory}
           categories={categories}
           priceRange={setPriceRange}
-        />
+        /> */}
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-15">
           {filteredAndSortedProducts.map((product) => (
             <ProductCard
               key={product.id}

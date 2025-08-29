@@ -117,7 +117,7 @@ const ProductsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen  py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -126,17 +126,17 @@ const ProductsPage = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white  shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="primary-color-bg rounded-full  shadow-sm p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black" />
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-black rounded-full  focus:outline-none "
               />
             </div>
 
@@ -144,7 +144,8 @@ const ProductsPage = () => {
             <select
               value={selectedMainCategory}
               onChange={(e) => setSelectedMainCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-black rounded-full  focus:outline-none "
+
             >
               <option value="">All Categories</option>
               {mainCategoriesData?.data?.map((category: any) => (
@@ -158,7 +159,7 @@ const ProductsPage = () => {
             <select
               value={selectedSubCategory}
               onChange={(e) => setSelectedSubCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-black rounded-full  focus:outline-none "
             >
               <option value="">All Sub Categories</option>
               {subCategoriesData?.data?.map((category: any) => (
@@ -169,7 +170,7 @@ const ProductsPage = () => {
             </select>
 
             {/* Sort */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
              <FaSortAlphaDownAlt size={20} />
               <select
                 value={sortBy}
@@ -186,7 +187,7 @@ const ProductsPage = () => {
               >
                 <FaSort className={sortOrder === 'asc' ? 'rotate-180' : ''} />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -199,7 +200,7 @@ const ProductsPage = () => {
 
         {/* Products Grid */}
         {currentProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1  gap-6">
             {currentProducts.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}

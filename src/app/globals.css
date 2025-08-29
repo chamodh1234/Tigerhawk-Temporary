@@ -45,8 +45,6 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -76,6 +74,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
 }
 
 .dark {
@@ -118,12 +118,10 @@
   }
 }
 
-
 /* Wrapper class for consistent layout */
 .wrapper {
   @apply max-w-[1800px] mx-auto px-4 sm:px-3 lg:px-8;
 }
-
 
 /* The side navigation menu */
 .sidenav {
@@ -140,7 +138,6 @@
 }
 
 /* The navigation menu links */
-
 
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
@@ -168,6 +165,15 @@
   .sidenav a {font-size: 18px;}
 }
 
-.primay-color-bg{
+.primary-color-bg{
  @apply bg-yellow-300;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

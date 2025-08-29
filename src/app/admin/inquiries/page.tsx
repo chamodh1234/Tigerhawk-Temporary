@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { useGetProductsForInquiryQuery, useUpdateInquiryMutation } from '@/lib/redux/apiSlice'
+import { useGetInquiriesQuery, useGetProductsForInquiryQuery, useUpdateInquiryMutation } from '@/lib/redux/apiSlice'
 import { FaEye, FaCheck, FaClock, FaUser, FaEnvelope, FaPhone, FaComments, FaCalendar, FaTimes } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 
@@ -25,7 +25,7 @@ const InquiriesPage = () => {
   
 
 
-  const { data: inquiriesData, isLoading, error, refetch } = useGetProductsForInquiryQuery(undefined)
+  const { data: inquiriesData, isLoading, error, refetch } = useGetInquiriesQuery(undefined)
 
   const markAsResponded = async (inquiryId: number , con: boolean = true) => {
    
@@ -60,6 +60,8 @@ const InquiriesPage = () => {
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
   }, [inquiriesData?.data, filterStatus])
+
+  console.log(filteredInquiries)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
